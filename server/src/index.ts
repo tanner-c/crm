@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import accountRoutes from './routes/accounts';
 
 dotenv.config();
 const app = express();
@@ -21,5 +22,7 @@ app.listen(PORT, () => {
 app.get('/api/status', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date() });
 });
+
+app.use('/api/accounts', accountRoutes);
 
 export default app;
