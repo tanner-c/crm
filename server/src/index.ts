@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import userRoutes from './routes/users';
 import accountRoutes from './routes/accounts';
+import authRoutes from './routes/auth';
 
 dotenv.config();
 const app = express();
@@ -23,6 +25,8 @@ app.get('/api/status', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date() });
 });
 
+app.use('/api/users', userRoutes);
 app.use('/api/accounts', accountRoutes);
+app.use('/api/auth', authRoutes);
 
 export default app;

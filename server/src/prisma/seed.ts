@@ -12,7 +12,7 @@ async function main() {
     create: {
       name: "Admin User",
       email: "admin@example.com",
-      password: "hashedpassword123",
+      password: "$2b$10$ypnznFeajLVCZRyLDcfcNeL4eGFPm4MuuEarGY/bhFTCdVov5Em7a", // password123
       role: "ADMIN",
     },
   });
@@ -21,7 +21,7 @@ async function main() {
     data: {
       name: "Sales Rep",
       email: "rep@example.com",
-      password: "hashedpassword123",
+      password: "$2b$10$ypnznFeajLVCZRyLDcfcNeL4eGFPm4MuuEarGY/bhFTCdVov5Em7a", // password123
       role: "USER",
     },
   });
