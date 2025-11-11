@@ -31,4 +31,24 @@ router.get("/:id", async (req, res) => {
   res.json(account);
 });
 
+// PATCH update account info
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, website, industry } = req.body;
+  const account = await prisma.account.update({
+    where: { id: String(id) },
+    data: { name, website, industry },
+  });
+  res.json(account);
+});
+
+// DELETE account
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  await prisma.account.delete({
+    where: { id: String(id) },
+  });
+  res.status(204).send();
+});
+
 export default router;
