@@ -15,7 +15,7 @@ To set up the development environment, follow these steps:
 5. Run database migrations and seed the database:
    - `cd ../server`
    - `npx prisma migrate deploy`
-   - `npx ts-node src/prisma/seed.ts`
+   - `npx prisma db seed`
 6. Start the development servers:
     - In `server` directory: `npm run dev`
     - In `client` directory: `npx vite`
