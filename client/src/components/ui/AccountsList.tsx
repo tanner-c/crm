@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../lib/storage";
+import { getCurrentUser } from "../../lib/storage";
+import { fetchWithAuth } from "../../lib/api";
 
 export default function AccountsList() {
   const [accounts, setAccounts] = useState([]);
@@ -9,11 +10,7 @@ export default function AccountsList() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const res = await fetch(`/api/accounts/user/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await fetchWithAuth(`/api/accounts/user/${user.id}`);
         if (!res.ok) throw new Error("Failed to fetch accounts");
         const data = await res.json();
         setAccounts(data);

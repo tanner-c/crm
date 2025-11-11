@@ -1,4 +1,4 @@
-import AccountsList from "../components/AccountsList";
+import AccountsList from "../components/ui/AccountsList";
 import LogoutButton from "../components/ui/LogoutButton";
 import { isLoggedIn } from "../lib/storage";
 import { useEffect } from "react";
