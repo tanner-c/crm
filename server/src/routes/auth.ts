@@ -6,6 +6,13 @@ import { getUserFromRequest } from '../utils/auth';
 
 const router = Router();
 
+/**
+ * Authentication Routes
+ * POST /register - Register a new user
+ * POST /login - Login user and return JWT token
+ * GET /me - Get current authenticated user
+ */
+
 // POST /register
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
@@ -43,14 +50,11 @@ router.post('/login', async (req, res) => {
 
 // GET /me
 router.get('/me', async (req, res) => {
-    getUserFromRequest(req).then(user => {
-        if (!user) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-        res.json(user);
-    }).catch(() => {
-        res.status(401).json({ error: 'Unauthorized' });
-    });
+    if (!req.user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    res.json(req.user);
 });
 
 export default router;
