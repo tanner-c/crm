@@ -3,6 +3,16 @@ import prisma from '../prisma/client';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
+
+/**
+ * Contacts Routes
+ * GET /api/contacts - Get all contacts
+ * POST /api/contacts - Create a new contact
+ * GET /api/contacts/:id - Get a single contact by ID
+ * PATCH /api/contacts/:id - Update contact info
+ * DELETE /api/contacts/:id - Delete a contact
+ */
+
 // GET all contacts
 router.get("/", requireAuth, async (_req, res) => {
     const contacts = await prisma.contact.findMany({

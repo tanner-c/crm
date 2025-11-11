@@ -10,6 +10,9 @@ declare global {
   }
 }
 
+/**
+ * Middleware to authenticate user from JWT token in request headers.
+ */
 export const authenticate = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const user = await getUserFromRequest(req);
@@ -22,6 +25,9 @@ export const authenticate = async (req: Request, _res: Response, next: NextFunct
   }
 };
 
+/**
+ * Middleware to require authentication.
+ */
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     return res.status(401).json({ error: "Authentication required" });
@@ -29,13 +35,18 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
   next();
 };
 
+/**
+ * Middleware to require admin role.
+ */
 export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) return res.status(401).json({ error: "Authentication required" });
   if (req.user.role !== "ADMIN") return res.status(403).json({ error: "Admin role required" });
   next();
 };
 
-// ownerField is the user id field on the resource or a function to check ownership
+/**
+ * Middleware to require either ownership or admin role.
+ */
 export const requireOwnerOrAdmin = (getOwnerId: (req: Request) => Promise<string | null>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) return res.status(401).json({ error: "Authentication required" });

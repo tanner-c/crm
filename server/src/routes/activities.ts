@@ -4,6 +4,15 @@ import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
+/**
+ * Activities Routes
+ * GET /api/activities - Get all activities
+ * POST /api/activities - Create a new activity
+ * GET /api/activities/:id - Get a single activity by ID
+ * PATCH /api/activities/:id - Update activity info
+ * DELETE /api/activities/:id - Delete an activity
+ */
+
 // GET all activities
 router.get("/", requireAuth, async (_req, res) => {
     try {

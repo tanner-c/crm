@@ -4,6 +4,16 @@ import { requireAdmin } from '../middleware/auth';
 
 const router = Router();
 
+/**
+ * Accounts Routes
+ * GET /api/accounts - Get all accounts (admin only)
+ * POST /api/accounts - Create a new account (admin only)
+ * GET /api/accounts/:id - Get a single account by ID with related contacts, deals, activities, and user (admin only)
+ * GET /api/accounts/user/:userId - Get accounts belonging to a specific user (admin only)
+ * PATCH /api/accounts/:id - Update account info (admin only)
+ * DELETE /api/accounts/:id - Delete an account (admin only)
+ */
+
 // GET all accounts
 router.get("/", requireAdmin,async (req, res) => {
   try {

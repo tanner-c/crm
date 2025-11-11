@@ -1,6 +1,10 @@
 import prisma from '../prisma/client';
 import jwt from 'jsonwebtoken';
 
+/**
+ * Checks if the user making the request is an admin.
+ * Returns true if admin, otherwise false.
+ */
 export const isAdmin = async (request: any): Promise<boolean> => {
     try {
         const authHeader = request.headers.authorization;
@@ -16,6 +20,10 @@ export const isAdmin = async (request: any): Promise<boolean> => {
     }
 };
 
+/**
+ * Extracts the user from the request based on the JWT token.
+ * Returns the user object if valid, otherwise null.
+ */
 export const getUserFromRequest = async (request: any) => {
     const authHeader = request.headers.authorization;
     if (!authHeader) {
@@ -31,7 +39,10 @@ export const getUserFromRequest = async (request: any) => {
     }
 };
 
-
+/**
+ * Checks if the request is authenticated by verifying the JWT token.
+ * Returns true if authenticated, otherwise false.
+ */
 export const isAuthenticated = async (request: any): Promise<boolean> => {
     const user = await getUserFromRequest(request);
     return user !== null;

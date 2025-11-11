@@ -10,7 +10,10 @@ import dealRoutes from './routes/deals';
 
 import { authenticate } from './middleware/auth';
 
+// Load environment variables
+// Variables set outside this file (e.g., in tests) will override these
 dotenv.config();
+
 const app = express();
 
 app.use(cors());

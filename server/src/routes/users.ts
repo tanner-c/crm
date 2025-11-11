@@ -7,6 +7,15 @@ import { Prisma } from "@prisma/client";
 
 const router = Router();
 
+/**
+ * Users Routes
+ * GET /api/users - Get all users (admin only)
+ * GET /api/users/:id - Get one user by ID (do NOT return password)
+ * POST /api/users - Create new user (public registration). If role is provided, only admin can set it.
+ * PATCH /api/users/:id - Update user info (admin only)
+ * DELETE /api/users/:id - Delete user (admin only)
+ */
+
 // Helper: fields to return (exclude password)
 const userSelect = {
     id: true,

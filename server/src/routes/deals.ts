@@ -3,6 +3,16 @@ import prisma from '../prisma/client';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
+
+/**
+ * Deals Routes
+ * GET /api/deals - Get all deals
+ * POST /api/deals - Create a new deal
+ * GET /api/deals/:id - Get a single deal by ID
+ * PATCH /api/deals/:id - Update deal info
+ * DELETE /api/deals/:id - Delete a deal
+ */
+
 // GET all deals
 router.get("/", requireAuth, async (_req, res) => {
     try {
