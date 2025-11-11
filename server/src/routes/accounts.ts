@@ -40,7 +40,6 @@ router.post("/", requireAdmin, async (req, res) => {
         website: website ?? null,
         industry: industry ?? null,
         ownerId: ownerId ?? null,
-        userId: userId ?? null,
       },
     });
 
@@ -56,7 +55,7 @@ router.get("/:id", requireAdmin, async (req, res) => {
     const { id } = req.params;
     const account = await prisma.account.findUnique({
       where: { id: String(id) },
-      include: { contacts: true, deals: true, activities: true, user: true },
+      include: { contacts: true, deals: true, activities: true, owner: true },
     });
 
     if (!account) {
