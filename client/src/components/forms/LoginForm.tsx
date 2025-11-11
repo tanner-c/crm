@@ -18,7 +18,7 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
   return (
     <form
       onSubmit={handleSubmit}>
-      <h2>Login</h2>
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
 
       {error && <div>{error}</div>}
 
@@ -26,6 +26,7 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
         type="email"
         placeholder="Email"
         value={email}
+        className="w-full p-2 mb-4 border border-gray-300 rounded"
         onChange={(e) => setEmail(e.target.value)}
         required
       />
@@ -34,12 +35,14 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
         type="password"
         placeholder="Password"
         value={password}
+        className="w-full p-2 mb-4 border border-gray-300 rounded"
         onChange={(e) => setPassword(e.target.value)}
         required
       />
 
       <button
         type="submit"
+        className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
