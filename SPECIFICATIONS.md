@@ -126,8 +126,6 @@ model Account {
   ownerId    String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  user       User?      @relation(fields: [userId], references: [id])
-  userId     String?
   deals      Deal[]
   activities Activity[]
   contacts   Contact[]
