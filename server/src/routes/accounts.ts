@@ -18,8 +18,8 @@ router.post("/", async (req, res) => {
   res.status(201).json(account);
 });
 
-// POST get single account with related contacts and deals
-router.post("/:id", async (req, res) => { 
+// GET get single account with related contacts and deals
+router.get("/:id", async (req, res) => { 
   const { id } = req.params;
   const account = await prisma.account.findUnique({
     where: { id: String(id) },
