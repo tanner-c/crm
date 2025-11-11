@@ -5,7 +5,7 @@ import { requireAdmin } from '../middleware/auth';
 const router = Router();
 
 // GET all accounts
-router.get("/", requireAdmin,async (_req, res) => {
+router.get("/", requireAdmin,async (req, res) => {
   try {
     const accounts = await prisma.account.findMany({
       orderBy: { createdAt: "desc" },
