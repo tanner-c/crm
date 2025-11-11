@@ -23,9 +23,12 @@ app.get('/', (req, res) => {
   res.send('CRM Server is running');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Only start listening if not running under tests
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
 
 app.get('/api/status', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date() });
