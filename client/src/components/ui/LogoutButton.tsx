@@ -8,7 +8,8 @@ export default function LogoutButton() {
 
     const handleLogout = () => {
         clearStorage();
-        navigate("/");
+        window.dispatchEvent(new Event('auth'));
+        navigate("/login");
     };
 
     return (

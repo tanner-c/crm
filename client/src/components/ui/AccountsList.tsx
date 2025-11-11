@@ -62,10 +62,26 @@ export default function AccountsList() {
             </td>
             <td className="px-4 py-2 border-b">{account.industry || "N/A"}</td>
             <td className="px-4 py-2 border-b">
-            {account.createdAt ? new Date(account.createdAt).toLocaleDateString() : "N/A"}
+              {account.createdAt
+                ? new Date(account.createdAt).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "N/A"}
             </td>
             <td className="px-4 py-2 border-b">
-            {account.updatedAt ? new Date(account.updatedAt).toLocaleDateString() : "N/A"}
+              {account.updatedAt
+                ? new Date(account.updatedAt).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "N/A"}
             </td>
           </tr>
           ))}
