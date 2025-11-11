@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes all remaining backend routes, data models, and API behaviors for the Simple CRM project.  
+This document describes all backend routes, data models, and API behaviors for the Simple CRM project.  
 
 All routes are prefixed with `/api/`.
 

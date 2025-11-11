@@ -1,6 +1,8 @@
 Full Stack CRM
 ================
 
+[API Specifications](SPECIFICATIONS.md)
+
 This is a full stack Customer Relationship Management (CRM) application built with a React frontend and a Node.js backend using Express and Prisma ORM.
 
 Getting Started
