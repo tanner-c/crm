@@ -30,3 +30,9 @@ export const getUserFromRequest = async (request: any) => {
         return null;
     }
 };
+
+
+export const isAuthenticated = async (request: any): Promise<boolean> => {
+    const user = await getUserFromRequest(request);
+    return user !== null;
+};
