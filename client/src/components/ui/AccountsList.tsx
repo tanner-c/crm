@@ -25,7 +25,6 @@ export default function AccountsList() {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Your Accounts</h2>
       {accounts.length === 0 ? (
       <p>No accounts found.</p>
       ) : (

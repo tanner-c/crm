@@ -193,7 +193,8 @@ Use `async/await` with Express and Prisma for each controller.
 | :------- | :----------- | :------------------------------------------------------- | :----------------------------------- |
 | `GET`    | `/deals`     | List all deals (optionally filter by stage or accountId) | —                                    |
 | `POST`   | `/deals`     | Create a deal                                            | `{ name, amount, stage, accountId }` |
-| `GET`    | `/deals/:id` | Get deal details + activities                            | —                                    |
+| `GET`    | `/deals/:id` | Get deal details + activities                            | 
+| `GET`    | `/deals/user/:userId` | Get deals belonging to a specific user           | —                                    |
 | `PATCH`  | `/deals/:id` | Update deal fields                                       | `{ stage, amount }`                  |
 | `DELETE` | `/deals/:id` | Delete deal                                              | —                                    |
 

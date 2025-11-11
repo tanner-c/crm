@@ -4,6 +4,7 @@ import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { Navbar } from "../components/ui/Navbar";
 import AccountsPage from "../pages/AccountsPage";
+import DealsPage from "../pages/DealsPage";
 
 export default function AppRouter() {''
   return (
@@ -15,6 +16,7 @@ export default function AppRouter() {''
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/deals" element={<DealsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />

@@ -9,6 +9,7 @@ const router = Router();
  * GET /api/deals - Get all deals
  * POST /api/deals - Create a new deal
  * GET /api/deals/:id - Get a single deal by ID
+ * GET /api/deals/user/:userId - Get deals belonging to a specific user
  * PATCH /api/deals/:id - Update deal info
  * DELETE /api/deals/:id - Delete a deal
  */
@@ -79,6 +80,21 @@ router.get("/:id", requireAuth, async (req, res) => {
         res.json(deal);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch deal" });
+    }
+});
+
+// GET deals belonging to a specific user
+router.get("/user/:userId", requireAuth, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const deals = await prisma.deal.findMany({
+            where: { ownerId: String(userId) },
+            orderBy: { createdAt: "desc" },
+            include: { account: true, owner: true },
+        });
+        res.json(deals);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch user deals" });
     }
 });
 
