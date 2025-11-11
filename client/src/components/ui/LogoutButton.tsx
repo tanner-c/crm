@@ -12,7 +12,7 @@ export default function LogoutButton() {
     };
 
     return (
-        <button onClick={handleLogout}>
+        <button className="w-24 p-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={handleLogout}>
             Logout
         </button>
     );

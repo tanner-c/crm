@@ -25,14 +25,54 @@ export default function AccountsList() {
 
   return (
     <div>
-    <h2>Your Accounts</h2>
-      <ul>
-        {accounts.map((account: any) => (
-          <li key={account.id}>
-            {account.name} - {account.website}
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-xl font-semibold mb-4">Your Accounts</h2>
+      {accounts.length === 0 ? (
+      <p>No accounts found.</p>
+      ) : (
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+        <thead>
+          <tr>
+          <th className="text-left px-4 py-2 border-b">Name</th>
+          <th className="text-left px-4 py-2 border-b">Website</th>
+          <th className="text-left px-4 py-2 border-b">Industry</th>
+          <th className="text-left px-4 py-2 border-b">Created At</th>
+          <th className="text-left px-4 py-2 border-b">Last Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {accounts.map((account: any) => (
+          <tr key={account.id} className="hover:bg-gray-50">
+            <td className="px-4 py-2 border-b">
+              {account.name || "N/A"}
+            </td>
+            <td className="px-4 py-2 border-b">
+            {account.website ? (
+              <a
+              className="text-blue-600 hover:underline"
+              href={account.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              >
+              {account.website}
+              </a>
+            ) : (
+              "N/A"
+            )}
+            </td>
+            <td className="px-4 py-2 border-b">{account.industry || "N/A"}</td>
+            <td className="px-4 py-2 border-b">
+            {account.createdAt ? new Date(account.createdAt).toLocaleDateString() : "N/A"}
+            </td>
+            <td className="px-4 py-2 border-b">
+            {account.updatedAt ? new Date(account.updatedAt).toLocaleDateString() : "N/A"}
+            </td>
+          </tr>
+          ))}
+        </tbody>
+        </table>
+      </div>
+      )}
     </div>
   );
 };
