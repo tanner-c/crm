@@ -59,6 +59,20 @@ router.get("/:id", requireAdmin, async (req, res) => {
   }
 });
 
+// GET accounts belonging to a specific user
+router.get("/user/:userId", requireAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const accounts = await prisma.account.findMany({
+      where: { ownerId: String(userId) },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(accounts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch accounts for user" });
+  }
+});
+
 // PATCH update account info
 router.patch("/:id", requireAdmin, async (req, res) => {
   try {

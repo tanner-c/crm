@@ -1,9 +1,11 @@
 import { useState } from "react";
 import LoginForm from "../components/forms/LoginForm";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
     setLoading(true);
@@ -19,8 +21,9 @@ export default function LoginPage() {
 
       const data = await res.json();
       localStorage.setItem("token", data.token);
-      // TODO: redirect to dashboard or set global user state
-      console.log("Logged in:", data);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -170,6 +170,7 @@ Use `async/await` with Express and Prisma for each controller.
 | :------- | :-------------- | :--------------------------------------------- |
 | `GET`    | `/api/accounts` | Get all accounts                               |
 | `POST`   | `/api/accounts` | Create new account                             |  
+| `GET`    | `/api/accounts/user/:userId` | Get accounts belonging to a specific user |
 | `GET`    | `/accounts/:id` | Get single account with related contacts/deals |
 | `PATCH`  | `/accounts/:id` | Update account info                            |
 | `DELETE` | `/accounts/:id` | Delete account                                 |
