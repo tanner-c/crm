@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { fetchWithAuth } from "../../lib/api";
 import { getCurrentUser } from "../../lib/storage";
+import { toTitleCase } from "../../lib/misc";
 
 export default function DealsList() {
   const [deals, setDeals] = useState([]);
-
   const user = getCurrentUser();
-
-
 
   useEffect(() => {
     const fetchDeals = async () => {
@@ -60,7 +58,9 @@ export default function DealsList() {
                   <td className="px-4 py-2 border-b">
                     {deal.amount ? `$${deal.amount.toFixed(2)}` : "N/A"}
                   </td>
-                  <td className="px-4 py-2 border-b">{deal.stage || "N/A"}</td>
+                  <td className="px-4 py-2 border-b">
+                    {deal.stage ? toTitleCase(deal.stage) : "N/A"}
+                  </td>
                   <td className="px-4 py-2 border-b">
                     {deal.closeDate
                       ? new Date(deal.closeDate).toLocaleString(undefined, {
