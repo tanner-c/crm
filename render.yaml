@@ -1,0 +1,22 @@
+previews:
+  generation: automatic
+
+services:
+  - name: crm-server
+    type: web
+    runtime: node
+    plan: free
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    region: ohio
+    autoDeployTrigger: "off"
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: crm-database
+    plan: free
+    region: ohio
+    ipAllowList: []
+
