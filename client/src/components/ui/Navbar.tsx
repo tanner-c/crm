@@ -30,7 +30,7 @@ export function Navbar() {
       <div className="ml-auto">
         {loggedIn &&
           <>
-            <Link to="/dashboard" className=" text-gray-300 hover:text-white mx-2">
+            <Link to="/dashboard" className="text-gray-300 hover:text-white mx-2">
               Dashboard
             </Link>
             <Link to="/accounts" className="text-gray-300 hover:text-white mx-2">
