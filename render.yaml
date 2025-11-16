@@ -4,7 +4,8 @@ services:
     runtime: static
     plan: free
     buildCommand: cd client && npm install && npm run build
-    startCommand: cd client && npx --yes serve -s dist -l $PORT
+    staticPublishPath: client/dist
+    # startCommand: cd client && npx --yes serve -s dist -l $PORT
     autoDeployTrigger: "off"
     envVars:
       - key: VITE_API_URL
