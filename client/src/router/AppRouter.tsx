@@ -5,13 +5,16 @@ import ProtectedRoute from "./ProtectedRoute";
 import { Navbar } from "../components/ui/Navbar";
 import AccountsPage from "../pages/AccountsPage";
 import DealsPage from "../pages/DealsPage";
+import RedirectLoggedIn from "./RedirectLoggedIn";
 
 export default function AppRouter() {''
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route element={<RedirectLoggedIn />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
