@@ -2,10 +2,8 @@ services:
   - name: crm
     type: web
     runtime: static
-    plan: free
     buildCommand: cd client && npm install && npm run build
-    startCommand: cd client && npx --yes serve -s dist -l $PORT
-    region: ohio
+    staticPublishPath: client/dist
     autoDeployTrigger: "off"
     envVars:
       - key: VITE_API_URL
@@ -18,7 +16,8 @@ services:
     type: web
     runtime: node
     plan: free
-    buildCommand: cd server && npm install && npx prisma migrate reset && npm run build
+    # We are doing a reset here for demo purposes; in a production app, consider running migrations instead (e.g., `npx prisma migrate deploy`)
+    buildCommand: cd server && npm install && echo "Resetting database..." && echo "Running in working directory $(pwd)" && echo "Contents of $(pwd)/src/prisma:" && ls -la $(pwd)/src/prisma && npx prisma migrate reset --force && npm run build
     startCommand: cd server && npm start
     region: ohio
     autoDeployTrigger: "off"
