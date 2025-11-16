@@ -58,7 +58,8 @@ router.get('/me', async (req, res) => {
         return res.status(401).json({ error: 'Not authenticated' });
     }
     
-    res.json(req.user);
+    const { password: _, ...safeUser } = req.user;
+    res.json({ user: safeUser });
 });
 
 export default router;
