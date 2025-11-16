@@ -5,6 +5,10 @@ services:
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
     autoDeployTrigger: commit
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_API_URL
         fromService:
