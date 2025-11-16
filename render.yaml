@@ -6,16 +6,11 @@ services:
     staticPublishPath: client/dist
     autoDeployTrigger: "off"
     envVars:
-      - key: VITE_API_HOST
+      - key: VITE_API_URL
         fromService:
           name: crm-server
           type: web
           property: host
-      - key: VITE_API_PORT
-        fromService:
-          name: crm-server
-          type: web
-          property: port
 
   - name: crm-server
     type: web
