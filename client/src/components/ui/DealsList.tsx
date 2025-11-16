@@ -6,6 +6,8 @@ import { toTitleCase } from "../../lib/misc";
 export default function DealsList() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
   const user = getCurrentUser();
 
   useEffect(() => {
@@ -17,8 +19,11 @@ export default function DealsList() {
         const data = await res.json();
         console.log(data)
         setDeals(data);
+        setLoading(false);
       } catch (err) {
         console.error(err);
+        setMessage("Failed to fetch deals.");
+        setLoading(false);
       }
     };
     fetchDeals();
@@ -26,7 +31,7 @@ export default function DealsList() {
 
   return (
     <div>
-      {loading ? (<p>Loading...</p>) : deals.length === 0 ? (<p>No accounts found.</p>) : (
+      {loading ? (<p>Loading...</p>) : message ? (<p>{message}</p>) : deals.length === 0 ? (<p>No deals found.</p>) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">
             <thead>

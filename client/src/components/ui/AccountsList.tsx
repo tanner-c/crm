@@ -5,6 +5,7 @@ import { callAPIWithAuth } from "../../lib/api";
 export default function AccountsList() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   const user = getCurrentUser();
 
@@ -16,8 +17,11 @@ export default function AccountsList() {
         if (!res.ok) throw new Error("Failed to fetch accounts");
         const data = await res.json();
         setAccounts(data);
+        setLoading(false);
       } catch (err) {
         console.error(err);
+        setMessage("Failed to fetch accounts.");
+        setLoading(false);
       }
     };
     fetchAccounts();
@@ -27,7 +31,7 @@ export default function AccountsList() {
 
   return (
     <div>
-      {loading ? (<p>Loading...</p>) : accounts.length === 0 ? (
+      {loading ? (<p>Loading...</p>) : message ? (<p>{message}</p>) : accounts.length === 0 ? (
       <p>No accounts found.</p>
       ) : (
       <div className="overflow-x-auto">
