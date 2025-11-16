@@ -4,7 +4,7 @@ services:
     runtime: static
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
-    autoDeployTrigger: "off"
+    autoDeployTrigger: commit
     envVars:
       - key: VITE_API_URL
         fromService:
@@ -20,7 +20,7 @@ services:
     buildCommand: cd server && npm install && echo "Resetting database..." && echo "Running in working directory $(pwd)" && echo "Contents of $(pwd)/src/prisma:" && ls -la $(pwd)/src/prisma && npx prisma migrate reset --force && npm run build
     startCommand: cd server && npm start
     region: ohio
-    autoDeployTrigger: "off"
+    autoDeployTrigger: commit
     envVars:
       - key: NODE_ENV
         value: production
