@@ -22,7 +22,7 @@ app.use(authenticate); // attach user to req if token is valid
 
 const PORT = process.env.PORT || 5000;
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('CRM Server is running');
 });
 
@@ -33,7 +33,7 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-app.get('/api/status', (req, res) => {
+app.get('/api/status', (_, res) => {
     res.json({ status: 'OK', timestamp: new Date() });
 });
 
