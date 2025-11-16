@@ -16,7 +16,7 @@ services:
     type: web
     runtime: node
     plan: free
-    buildCommand: cd server && npm install && npx prisma migrate reset && npm run build
+    buildCommand: cd server && npm install && npx prisma migrate reset --force && npm run build
     startCommand: cd server && npm start
     region: ohio
     autoDeployTrigger: "off"
