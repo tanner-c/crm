@@ -4,12 +4,14 @@ import { callAPIWithAuth } from "../../lib/api";
 
 export default function AccountsList() {
   const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const user = getCurrentUser();
 
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
+        setLoading(true);
         const res = await callAPIWithAuth(`accounts/user/${user.id}`);
         if (!res.ok) throw new Error("Failed to fetch accounts");
         const data = await res.json();
@@ -25,7 +27,7 @@ export default function AccountsList() {
 
   return (
     <div>
-      {accounts.length === 0 ? (
+      {loading ? (<p>Loading...</p>) : accounts.length === 0 ? (
       <p>No accounts found.</p>
       ) : (
       <div className="overflow-x-auto">

@@ -5,11 +5,13 @@ import { toTitleCase } from "../../lib/misc";
 
 export default function DealsList() {
   const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
   const user = getCurrentUser();
 
   useEffect(() => {
     const fetchDeals = async () => {
       try {
+        setLoading(true);
         const res = await callAPIWithAuth(`deals/user/${user.id}`);
         if (!res.ok) throw new Error("Failed to fetch deals");
         const data = await res.json();
@@ -24,7 +26,7 @@ export default function DealsList() {
 
   return (
     <div>
-      {deals.length === 0 ? (<p>No accounts found.</p>) : (
+      {loading ? (<p>Loading...</p>) : deals.length === 0 ? (<p>No accounts found.</p>) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">
             <thead>
