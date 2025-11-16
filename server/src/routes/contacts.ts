@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../prisma/client';
-import { requireAuth } from '../middleware/auth';
+import { requireAdmin, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -14,7 +14,7 @@ const router = Router();
  */
 
 // GET all contacts
-router.get("/", requireAuth, async (_req, res) => {
+router.get("/", requireAdmin, async (_req, res) => {
     const contacts = await prisma.contact.findMany({
         orderBy: { createdAt: "desc" },
         include: { account: true, owner: true, activities: true },
@@ -42,6 +42,7 @@ router.get("/:id", requireAuth, async (req, res) => {
         where: { id },
         include: { account: true, owner: true, activities: true },
     });
+
     if (!contact) {
         return res.status(404).json({ error: "Contact not found" });
     }

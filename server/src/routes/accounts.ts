@@ -20,6 +20,7 @@ router.get("/", requireAdmin,async (req, res) => {
     const accounts = await prisma.account.findMany({
       orderBy: { createdAt: "desc" },
     });
+
     res.json(accounts);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch accounts" });
@@ -30,6 +31,7 @@ router.get("/", requireAdmin,async (req, res) => {
 router.post("/", requireAdmin, async (req, res) => {
   try {
     const { name, website, industry, ownerId, userId } = req.body;
+
     if (!name || typeof name !== "string") {
       return res.status(400).json({ error: "Name is required" });
     }
@@ -53,6 +55,7 @@ router.post("/", requireAdmin, async (req, res) => {
 router.get("/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+
     const account = await prisma.account.findUnique({
       where: { id: String(id) },
       include: { contacts: true, deals: true, activities: true, owner: true },
@@ -76,6 +79,7 @@ router.get("/user/:userId", requireAdmin, async (req, res) => {
       where: { ownerId: String(userId) },
       orderBy: { createdAt: "desc" },
     });
+
     res.json(accounts);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch accounts for user" });
@@ -89,6 +93,7 @@ router.patch("/:id", requireAdmin, async (req, res) => {
     const { name, website, industry, ownerId, userId } = req.body;
 
     const data: any = {};
+
     if (name !== undefined) data.name = name;
     if (website !== undefined) data.website = website;
     if (industry !== undefined) data.industry = industry;
@@ -116,6 +121,7 @@ router.delete("/:id", requireAdmin, async (req, res) => {
     await prisma.account.delete({
       where: { id: String(id) },
     });
+
     res.status(204).send();
   } catch (error: any) {
     if (error.code === "P2025") {

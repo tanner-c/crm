@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../prisma/client';
-import { requireAuth } from '../middleware/auth';
+import { requireAdmin, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -14,7 +14,7 @@ const router = Router();
  */
 
 // GET all activities
-router.get("/", requireAuth, async (_req, res) => {
+router.get("/", requireAdmin, async (_req, res) => {
     try {
         const activities = await prisma.activity.findMany({
             orderBy: { createdAt: "desc" },

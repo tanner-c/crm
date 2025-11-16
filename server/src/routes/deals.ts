@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../prisma/client';
-import { requireAuth } from '../middleware/auth';
+import { requireAdmin, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ const router = Router();
  */
 
 // GET all deals
-router.get("/", requireAuth, async (_req, res) => {
+router.get("/", requireAdmin, async (_req, res) => {
     try {
         const deals = await prisma.deal.findMany({
             orderBy: { createdAt: "desc" },
