@@ -6,7 +6,9 @@ export function callAPIWithAuth(url: string, options: RequestInit = {}): Promise
     };
 
     if(import.meta.env.VITE_API_URL){
-        url = `http://${import.meta.env.VITE_API_URL}/api/${url}`;
+        const protocol = import.meta.env.DEV ? 'http' : 'https';
+
+        url = `${protocol}://${import.meta.env.VITE_API_URL}/api/${url}`;
     }
 
     return fetch(url, { ...options, headers });
@@ -15,7 +17,9 @@ export function callAPIWithAuth(url: string, options: RequestInit = {}): Promise
 
 export function callAPI(url: string, options: RequestInit = {}): Promise<Response> {
     if (import.meta.env.VITE_API_URL) {
-        url = `http://${import.meta.env.VITE_API_URL}/api/${url}`;
+        const protocol = import.meta.env.DEV ? 'http' : 'https';
+        
+        url = `${protocol}://${import.meta.env.VITE_API_URL}/api/${url}`;
     }
 
     return fetch(url, { ...options });
