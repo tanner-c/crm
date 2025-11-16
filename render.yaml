@@ -2,10 +2,8 @@ services:
   - name: crm
     type: web
     runtime: static
-    plan: free
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
-    # startCommand: cd client && npx --yes serve -s dist -l $PORT
     autoDeployTrigger: "off"
     envVars:
       - key: VITE_API_URL
