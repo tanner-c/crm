@@ -33,7 +33,7 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-app.get('/api/status', (_, res) => {
+app.get('/api/status', (_req, res) => {
     res.json({ status: 'OK', timestamp: new Date() });
 });
 
