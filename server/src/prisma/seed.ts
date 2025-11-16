@@ -71,11 +71,22 @@ async function main() {
     data: {
       name: "Acme Partnership",
       amount: 50000,
-      stage: "Negotiation",
+      stage: "NEW",
       accountId: acme.id,
       ownerId: salesRep.id,
     },
   });
+
+  await prisma.deal.create({
+    data: {
+      name: "Globex Expansion",
+      amount: 75000,
+      stage: "NEW",
+      accountId: globex.id,
+      ownerId: admin.id,
+    },
+  });
+
 
   console.log("✅ Seeding complete!");
 }
