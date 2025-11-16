@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchWithAuth } from "../../lib/api";
+import { callAPIWithAuth } from "../../lib/api";
 import { getCurrentUser } from "../../lib/storage";
 import { toTitleCase } from "../../lib/misc";
 
@@ -10,7 +10,7 @@ export default function DealsList() {
   useEffect(() => {
     const fetchDeals = async () => {
       try {
-        const res = await fetchWithAuth(`/api/deals/user/${user.id}`);
+        const res = await callAPIWithAuth(`deals/user/${user.id}`);
         if (!res.ok) throw new Error("Failed to fetch deals");
         const data = await res.json();
         console.log(data)

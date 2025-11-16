@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LoginForm from "../components/forms/LoginForm";
 import { useNavigate } from "react-router";
+import { callAPI } from "../lib/api";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await callAPI("auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
