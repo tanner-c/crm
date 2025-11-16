@@ -5,7 +5,6 @@ services:
     plan: free
     buildCommand: cd client && npm install && npm run build
     startCommand: cd client && npx --yes serve -s dist -l $PORT
-    region: ohio
     autoDeployTrigger: "off"
     envVars:
       - key: VITE_API_URL
