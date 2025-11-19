@@ -7,6 +7,8 @@ This is a full stack Customer Relationship Management (CRM) application built wi
 
 [Live Demo](https://crm-68cu.onrender.com)
 
+**Note**: Since the app is using free hosting, it may take up to 60 seconds or longer for initial login while the instance boots.
+
 User credentials for demo:
 
 - Email: <admin@example.com>
