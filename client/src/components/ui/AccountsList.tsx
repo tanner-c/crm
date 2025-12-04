@@ -1,33 +1,13 @@
-import { useEffect, useState } from "react";
-import { getCurrentUser } from "../../lib/storage";
-import { callAPIWithAuth } from "../../lib/api";
-import ItemTable from "./ItemTable";
 import { Link } from "react-router";
+import ItemTable from "./ItemTable";
 
-export default function AccountsList() {
-  const [accounts, setAccounts] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [message, setMessage] = useState<string>("");
+interface AccountsListProps {
+  accounts: any[];
+  loading: boolean;
+  message: string;
+}
 
-  const user = getCurrentUser();
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        setLoading(true);
-        const res = await callAPIWithAuth(`accounts/user/${user.id}`);
-        if (!res.ok) throw new Error("Failed to fetch accounts");
-        const data = await res.json();
-        setAccounts(data);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setMessage("Failed to fetch accounts.");
-        setLoading(false);
-      }
-    };
-    fetchAccounts();
-  }, [user.id]);
+export default function AccountsList({ accounts, loading, message }: AccountsListProps) {
 
   const renderAccountRow = (account: any) => (
     <tr key={account.id} className="hover:bg-gray-50 transition-colors duration-200">
