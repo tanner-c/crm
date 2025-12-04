@@ -5,13 +5,6 @@ Full Stack CRM
 
 This is a full stack Customer Relationship Management (CRM) application built with a React frontend and a Node.js backend using Express and Prisma ORM.
 
-[Live Demo](https://crm-68cu.onrender.com)
-
-User credentials for demo:
-
-- Email: <admin@example.com>
-- Password: password123
-
 Getting Started
 ----------------
 
