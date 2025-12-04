@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { getCurrentUser } from "../../lib/storage";
 import { callAPIWithAuth } from "../../lib/api";
 import ItemTable from "./ItemTable";
+import { Link } from "react-router";
 
 export default function AccountsList() {
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>("");
 
   const user = getCurrentUser();
 
@@ -31,7 +32,9 @@ export default function AccountsList() {
   const renderAccountRow = (account: any) => (
     <tr key={account.id} className="hover:bg-gray-50 transition-colors duration-200">
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-        {account.name || "N/A"}
+        <Link to={`/accounts/${account.id}`} className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200">
+          {account.name || "N/A"}
+        </Link>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         {account.website ? (

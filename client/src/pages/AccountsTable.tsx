@@ -1,6 +1,6 @@
 import AccountsList from "../components/ui/AccountsList";
 
-export default function Accounts() {
+export default function AccountsTable() {
   return (
     <div>
       <div className="w-3/4 mx-auto mt-10 p-6 bg-white rounded shadow">

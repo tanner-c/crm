@@ -3,9 +3,10 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import { Navbar } from "../components/ui/Navbar";
-import Accounts from "../pages/Accounts";
+import AccountsTable from "../pages/AccountsTable";
 import Deals from "../pages/Deals";
 import RedirectLoggedIn from "./RedirectLoggedIn";
+import EditAccount from "../pages/EditAccount";
 
 export default function AppRouter() {
   ''
@@ -19,8 +20,9 @@ export default function AppRouter() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/accounts" element={<Accounts />} />
+          <Route path="/accounts" element={<AccountsTable />} />
           <Route path="/deals" element={<Deals />} />
+          <Route path="/accounts/:id" element={<EditAccount />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />

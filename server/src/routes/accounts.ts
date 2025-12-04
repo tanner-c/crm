@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../prisma/client';
-import { requireAdmin } from '../middleware/auth';
+import { requireAdmin, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ const router = Router();
  */
 
 // GET all accounts
-router.get("/", requireAdmin,async (req, res) => {
+router.get("/", requireAdmin, async (req, res) => {
   try {
     const accounts = await prisma.account.findMany({
       orderBy: { createdAt: "desc" },
@@ -28,7 +28,7 @@ router.get("/", requireAdmin,async (req, res) => {
 });
 
 // POST create account
-router.post("/", requireAdmin, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const { name, website, industry, ownerId, userId } = req.body;
 
@@ -52,7 +52,7 @@ router.post("/", requireAdmin, async (req, res) => {
 });
 
 // GET get single account with related contacts, deals, activities, and user
-router.get("/:id", requireAdmin, async (req, res) => {
+router.get("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -87,7 +87,7 @@ router.get("/user/:userId", requireAdmin, async (req, res) => {
 });
 
 // PATCH update account info
-router.patch("/:id", requireAdmin, async (req, res) => {
+router.patch("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, website, industry, ownerId, userId } = req.body;
@@ -115,7 +115,7 @@ router.patch("/:id", requireAdmin, async (req, res) => {
 });
 
 // DELETE account
-router.delete("/:id", requireAdmin, async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     await prisma.account.delete({
