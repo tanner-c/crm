@@ -60,7 +60,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && loggedIn && (
-        <div className="absolute top-16 left-0 w-full bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg md:hidden fade-in z-50">
+        <div className="absolute top-16 left-0 w-full bg-linear-to-r from-blue-600 to-purple-600 shadow-lg md:hidden fade-in z-50">
           <div className="flex flex-col space-y-2 p-4">
             <Link
               to="/dashboard"

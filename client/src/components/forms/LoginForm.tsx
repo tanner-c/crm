@@ -51,7 +51,7 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
 
       <button
         type="submit"
-        className="w-full p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+        className="w-full p-3 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
         disabled={loading}
       >
         {loading ? (

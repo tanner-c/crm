@@ -41,7 +41,7 @@ export default function ItemTable<T>({
   return (
     <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200 fade-in">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gradient-to-r from-blue-50 to-purple-50">
+        <thead className="bg-linear-to-r from-blue-50 to-purple-50">
           <tr>
             {headers.map((header) => (
               <th

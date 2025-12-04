@@ -5,7 +5,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router";
 import { callAPIWithAuth } from "../lib/api";
-import { toTitleCase } from "../lib/misc";
 import AccountForm from "../components/ui/AccountForm";
 import ContactManager from "../components/ui/ContactManager";
 import DealManager from "../components/ui/DealManager";

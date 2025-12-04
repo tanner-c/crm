@@ -1,21 +1,39 @@
 import { useState } from "react";
 import { callAPIWithAuth } from "../../lib/api";
+import type { Deal, User, DealManagerProps, DealFormData, Stage } from "../../types";
 
-interface DealManagerProps {
-  accountId: string | undefined;
-  deals: any[];
-  users: any[];
-  onUpdate: () => void;
-}
-
+/**
+ * DealManager Component
+ *
+ * Provides full CRUD functionality for managing deals associated with an account.
+ * Features include:
+ * - Adding new deals with stage tracking
+ * - Editing existing deals inline
+ * - Deleting deals with confirmation
+ * - Owner assignment from user list
+ * - Form validation and error handling
+ * - Responsive design with modern UI
+ */
 export default function DealManager({ accountId, deals, users, onUpdate }: DealManagerProps) {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
-  const [newDeal, setNewDeal] = useState({ name: '', amount: '', stage: 'NEW', closeDate: '', ownerId: '' });
+  const [newDeal, setNewDeal] = useState<DealFormData>({
+    name: '',
+    amount: '',
+    stage: 'NEW',
+    closeDate: '',
+    ownerId: ''
+  });
   const [editingDealId, setEditingDealId] = useState<string | null>(null);
-  const [editDeal, setEditDeal] = useState({ name: '', amount: '', stage: 'NEW', closeDate: '', ownerId: '' });
+  const [editDeal, setEditDeal] = useState<DealFormData>({
+    name: '',
+    amount: '',
+    stage: 'NEW',
+    closeDate: '',
+    ownerId: ''
+  });
   const [message, setMessage] = useState<string>("");
 
-  const stages = ['NEW', 'PROSPECTING', 'QUALIFIED', 'PROPOSAL', 'WON', 'LOST'];
+  const stages: Stage[] = ['NEW', 'PROSPECTING', 'QUALIFIED', 'PROPOSAL', 'WON', 'LOST'];
 
   const handleAddDeal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +66,11 @@ export default function DealManager({ accountId, deals, users, onUpdate }: DealM
     }
   };
 
-  const handleEditDeal = (deal: any) => {
+  /**
+   * Initialize editing mode for a deal
+   * @param deal - The deal object to edit
+   */
+  const handleEditDeal = (deal: Deal) => {
     setEditingDealId(deal.id);
     setEditDeal({
       name: deal.name,
