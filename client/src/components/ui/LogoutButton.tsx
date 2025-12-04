@@ -13,8 +13,8 @@ export default function LogoutButton() {
     };
 
     return (
-        <button className="w-24 p-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={handleLogout}>
-            Logout
+        <button className="w-24 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105" onClick={handleLogout}>
+            🚪 Logout
         </button>
     );
 }

@@ -8,9 +8,9 @@ This is a full stack Customer Relationship Management (CRM) application built wi
 Screenshots
 -----------
 
-| Login | Accounts | Account Edit |
-|-------|----------|---------------|
-| <img src="docs/login.png" width="300" alt="Login"> | <img src="docs/accounts.png" width="300" alt="Accounts"> | <img src="docs/account-edit.png" width="300" alt="Account Edit"> |
+| Dashboard | Login | Accounts | Account Edit |
+|-------|----------|---------------|---------------|
+| <img src="docs/dashboard.png" width="300" alt="Dashboard"> | <img src="docs/login.png" width="300" alt="Login"> | <img src="docs/accounts.png" width="300" alt="Accounts"> | <img src="docs/account-edit.png" width="300" alt="Account Edit"> |
 
 Getting Started
 ----------------

@@ -96,27 +96,27 @@ export default function ContactManager({ accountId, contacts, onUpdate }: Contac
 
   return (
     <>
-      <h2 className="text-xl font-bold mt-8 mb-4">Associated Contacts</h2>
+      <h2 className="text-2xl font-bold mt-8 mb-6 text-gray-800">👥 Associated Contacts</h2>
       {message && (
-        <div className={`mb-4 p-3 md:p-4 rounded ${message.includes('successfully') ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'}`}>
+        <div className={`mb-6 p-4 rounded-lg ${message.includes('successfully') ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'} fade-in`}>
           {message}
         </div>
       )}
       <button
         onClick={() => setShowAddForm(!showAddForm)}
-        className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        className="mb-6 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 transform hover:scale-105"
       >
-        {showAddForm ? 'Cancel Add' : 'Add Contact'}
+        {showAddForm ? '❌ Cancel Add' : '➕ Add Contact'}
       </button>
       {showAddForm && (
-        <form onSubmit={handleAddContact} className="mb-4 p-4 border border-gray-200 rounded bg-gray-50">
+        <form onSubmit={handleAddContact} className="mb-6 p-6 bg-white shadow-lg rounded-lg fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               placeholder="First Name"
               value={newContact.firstName}
               onChange={(e) => setNewContact({ ...newContact, firstName: e.target.value })}
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               required
             />
             <input
@@ -124,7 +124,7 @@ export default function ContactManager({ accountId, contacts, onUpdate }: Contac
               placeholder="Last Name"
               value={newContact.lastName}
               onChange={(e) => setNewContact({ ...newContact, lastName: e.target.value })}
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               required
             />
             <input
@@ -132,43 +132,43 @@ export default function ContactManager({ accountId, contacts, onUpdate }: Contac
               placeholder="Email"
               value={newContact.email}
               onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
             />
             <input
               type="tel"
               placeholder="Phone"
               value={newContact.phone}
               onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
             />
             <input
               type="text"
               placeholder="Title"
               value={newContact.title}
               onChange={(e) => setNewContact({ ...newContact, title: e.target.value })}
-              className="p-2 border border-gray-300 rounded md:col-span-2"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 md:col-span-2"
             />
           </div>
-          <button type="submit" className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Add Contact
+          <button type="submit" className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            ➕ Add Contact
           </button>
         </form>
       )}
       {contacts.length === 0 ? (
         <p className="text-gray-500">No contacts associated with this account.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-4">
           {contacts.map((contact: any) => (
-            <li key={contact.id} className="border border-gray-200 rounded p-4">
+            <li key={contact.id} className="card-hover border border-gray-200 rounded-lg p-6 bg-white shadow-md fade-in">
               {editingContactId === contact.id ? (
-                <form onSubmit={handleSaveEdit} className="space-y-2">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <form onSubmit={handleSaveEdit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="text"
                       placeholder="First Name"
                       value={editContact.firstName}
                       onChange={(e) => setEditContact({ ...editContact, firstName: e.target.value })}
-                      className="p-2 border border-gray-300 rounded"
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                       required
                     />
                     <input
@@ -176,7 +176,7 @@ export default function ContactManager({ accountId, contacts, onUpdate }: Contac
                       placeholder="Last Name"
                       value={editContact.lastName}
                       onChange={(e) => setEditContact({ ...editContact, lastName: e.target.value })}
-                      className="p-2 border border-gray-300 rounded"
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                       required
                     />
                     <input
@@ -184,50 +184,50 @@ export default function ContactManager({ accountId, contacts, onUpdate }: Contac
                       placeholder="Email"
                       value={editContact.email}
                       onChange={(e) => setEditContact({ ...editContact, email: e.target.value })}
-                      className="p-2 border border-gray-300 rounded"
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     />
                     <input
                       type="tel"
                       placeholder="Phone"
                       value={editContact.phone}
                       onChange={(e) => setEditContact({ ...editContact, phone: e.target.value })}
-                      className="p-2 border border-gray-300 rounded"
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                     />
                     <input
                       type="text"
                       placeholder="Title"
                       value={editContact.title}
                       onChange={(e) => setEditContact({ ...editContact, title: e.target.value })}
-                      className="p-2 border border-gray-300 rounded md:col-span-2"
+                      className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 md:col-span-2"
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                      Save
+                    <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+                      💾 Save
                     </button>
-                    <button type="button" onClick={handleCancelEdit} className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
-                      Cancel
+                    <button type="button" onClick={handleCancelEdit} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 transform hover:scale-105">
+                      ❌ Cancel
                     </button>
                   </div>
                 </form>
               ) : (
                 <>
-                  <p className="font-medium">{contact.firstName} {contact.lastName}</p>
-                  <p className="text-sm text-gray-600">Email: {contact.email || 'N/A'}</p>
-                  <p className="text-sm text-gray-600">Phone: {contact.phone || 'N/A'}</p>
-                  <p className="text-sm text-gray-600">Title: {contact.title || 'N/A'}</p>
-                  <div className="mt-2 flex space-x-2">
+                  <p className="font-semibold text-lg text-gray-800">{contact.firstName} {contact.lastName}</p>
+                  <p className="text-sm text-gray-600">📧 Email: {contact.email || 'N/A'}</p>
+                  <p className="text-sm text-gray-600">📞 Phone: {contact.phone || 'N/A'}</p>
+                  <p className="text-sm text-gray-600">🏢 Title: {contact.title || 'N/A'}</p>
+                  <div className="mt-4 flex space-x-2">
                     <button
                       onClick={() => handleEditContact(contact)}
-                      className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 text-sm"
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 transform hover:scale-105"
                     >
-                      Edit
+                      ✏️ Edit
                     </button>
                     <button
                       onClick={() => handleDeleteContact(contact.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm"
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105"
                     >
-                      Delete
+                      🗑️ Delete
                     </button>
                   </div>
                 </>

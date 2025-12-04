@@ -23,30 +23,30 @@ export default function ItemTable<T>({
 }: ItemTableProps<T>) {
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading...</span>
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <span className="ml-3 text-gray-600 text-lg">Loading...</span>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 text-lg">{emptyMessage}</p>
+      <div className="text-center py-12">
+        <p className="text-gray-500 text-lg">📭 {emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+    <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200 fade-in">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <thead className="bg-gradient-to-r from-blue-50 to-purple-50">
           <tr>
             {headers.map((header) => (
               <th
                 key={header}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-4 md:px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
               >
                 {header}
               </th>

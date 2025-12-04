@@ -34,8 +34,10 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
+    <div className="min-h-screen gradient-bg flex items-center justify-center p-4 fade-in">
+      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-8 card-hover">
+        <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
+      </div>
     </div>
   );
 }

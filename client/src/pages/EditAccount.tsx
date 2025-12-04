@@ -104,36 +104,38 @@ export default function EditAccount() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-6 md:mt-10 p-4 md:p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Edit Account</h1>
-      <AccountForm
-        formData={formData}
-        setFormData={setFormData}
-        users={users}
-        onSubmit={handleSubmit}
-        saving={saving}
-        message={message}
-      />
-      <ContactManager
-        accountId={id}
-        contacts={account.contacts}
-        onUpdate={refetchAccount}
-      />
-      <h2 className="text-xl font-bold mt-8 mb-4">Associated Deals</h2>
-      {account.deals.length === 0 ? (
-        <p className="text-gray-500">No deals associated with this account.</p>
-      ) : (
-        <ul className="space-y-2">
-          {account.deals.map((deal: any) => (
-            <li key={deal.id} className="border border-gray-200 rounded p-4">
-              <p className="font-medium">{deal.name}</p>
-              <p className="text-sm text-gray-600">Amount: {deal.amount ? `$${deal.amount.toFixed(2)}` : 'N/A'}</p>
-              <p className="text-sm text-gray-600">Stage: {deal.stage ? toTitleCase(deal.stage) : 'N/A'}</p>
-              <p className="text-sm text-gray-600">Close Date: {deal.closeDate ? new Date(deal.closeDate).toLocaleDateString() : 'N/A'}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="min-h-screen gradient-bg p-4 md:p-6 fade-in">
+      <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 md:p-8 card-hover">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">✏️ Edit Account</h1>
+        <AccountForm
+          formData={formData}
+          setFormData={setFormData}
+          users={users}
+          onSubmit={handleSubmit}
+          saving={saving}
+          message={message}
+        />
+        <ContactManager
+          accountId={id}
+          contacts={account.contacts}
+          onUpdate={refetchAccount}
+        />
+        <h2 className="text-2xl font-bold mt-8 mb-4 text-gray-800">💼 Associated Deals</h2>
+        {account.deals.length === 0 ? (
+          <p className="text-gray-500">No deals associated with this account.</p>
+        ) : (
+          <ul className="space-y-2">
+            {account.deals.map((deal: any) => (
+              <li key={deal.id} className="border border-gray-200 rounded p-4 bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                <p className="font-medium">{deal.name}</p>
+                <p className="text-sm text-gray-600">Amount: {deal.amount ? `$${deal.amount.toFixed(2)}` : 'N/A'}</p>
+                <p className="text-sm text-gray-600">Stage: {deal.stage ? toTitleCase(deal.stage) : 'N/A'}</p>
+                <p className="text-sm text-gray-600">Close Date: {deal.closeDate ? new Date(deal.closeDate).toLocaleDateString() : 'N/A'}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }

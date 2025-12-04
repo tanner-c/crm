@@ -13,20 +13,22 @@ export default function AppRouter() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route element={<RedirectLoggedIn />}>
-          <Route path="/login" element={<Login />} />
-        </Route>
+      <div className="pt-16">
+        <Routes>
+          <Route element={<RedirectLoggedIn />}>
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/accounts" element={<AccountsTable />} />
-          <Route path="/deals" element={<Deals />} />
-          <Route path="/accounts/:id" element={<EditAccount />} />
-        </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/accounts" element={<AccountsTable />} />
+            <Route path="/deals" element={<Deals />} />
+            <Route path="/accounts/:id" element={<EditAccount />} />
+          </Route>
 
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
