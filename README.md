@@ -8,11 +8,9 @@ This is a full stack Customer Relationship Management (CRM) application built wi
 Screenshots
 -----------
 
-| Page          | Screenshot |
-|---------------|------------|
-| Login         | ![Login](docs/login.png) |
-| Accounts      | ![Accounts](docs/accounts.png) |
-| Account Edit  | ![Account Edit](docs/account-edit.png) |
+| Login | Accounts | Account Edit |
+|-------|----------|---------------|
+| <img src="docs/login.png" width="300" alt="Login"> | <img src="docs/accounts.png" width="300" alt="Accounts"> | <img src="docs/account-edit.png" width="300" alt="Account Edit"> |
 
 Getting Started
 ----------------
