@@ -5,6 +5,15 @@ Full Stack CRM
 
 This is a full stack Customer Relationship Management (CRM) application built with a React frontend and a Node.js backend using Express and Prisma ORM.
 
+Screenshots
+-----------
+
+| Page          | Screenshot |
+|---------------|------------|
+| Login         | ![Login](docs/login.png) |
+| Accounts      | ![Accounts](docs/accounts.png) |
+| Account Edit  | ![Account Edit](docs/account-edit.png) |
+
 Getting Started
 ----------------
 
