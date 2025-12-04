@@ -8,6 +8,7 @@ import { callAPIWithAuth } from "../lib/api";
 import { toTitleCase } from "../lib/misc";
 import AccountForm from "../components/ui/AccountForm";
 import ContactManager from "../components/ui/ContactManager";
+import DealManager from "../components/ui/DealManager";
 
 export default function EditAccount() {
   const [account, setAccount] = useState<any>(null);
@@ -120,21 +121,12 @@ export default function EditAccount() {
           contacts={account.contacts}
           onUpdate={refetchAccount}
         />
-        <h2 className="text-2xl font-bold mt-8 mb-4 text-gray-800">💼 Associated Deals</h2>
-        {account.deals.length === 0 ? (
-          <p className="text-gray-500">No deals associated with this account.</p>
-        ) : (
-          <ul className="space-y-2">
-            {account.deals.map((deal: any) => (
-              <li key={deal.id} className="border border-gray-200 rounded p-4 bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                <p className="font-medium">{deal.name}</p>
-                <p className="text-sm text-gray-600">Amount: {deal.amount ? `$${deal.amount.toFixed(2)}` : 'N/A'}</p>
-                <p className="text-sm text-gray-600">Stage: {deal.stage ? toTitleCase(deal.stage) : 'N/A'}</p>
-                <p className="text-sm text-gray-600">Close Date: {deal.closeDate ? new Date(deal.closeDate).toLocaleDateString() : 'N/A'}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+        <DealManager
+          accountId={id}
+          deals={account.deals}
+          users={users}
+          onUpdate={refetchAccount}
+        />
       </div>
     </div>
   )
