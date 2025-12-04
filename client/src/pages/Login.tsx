@@ -3,7 +3,7 @@ import LoginForm from "../components/forms/LoginForm";
 import { useNavigate } from "react-router";
 import { callAPI } from "../lib/api";
 
-export default function LoginPage() {
+export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();

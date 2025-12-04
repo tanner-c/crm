@@ -1,6 +1,6 @@
 import DealsList from "../components/ui/DealsList";
 
-export default function DealsPage() {
+export default function Deals() {
   return (
     <div>
       <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded shadow">
