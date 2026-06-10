@@ -1,8 +1,13 @@
 import './App.css'
 import AppRouter from './router/AppRouter';
+import ErrorBoundary from './components/error/ErrorBoundary';
 
 function App() {
-  return <AppRouter />;
+  return (
+    <ErrorBoundary>
+      <AppRouter />
+    </ErrorBoundary>
+  );
 }
 
 export default App
