@@ -13,13 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Stage {
-  NEW
-  PROSPECTING
-  QUALIFIED
-  PROPOSAL
-  WON
-  LOST
+enum Role {
+  USER
+  MANAGER
+  ADMIN
+}
+
+enum Platform {
+  PC
+  PLAYSTATION
+  XBOX
+  NINTENDO
+  MOBILE
+  OTHER
+}
+
+enum SaleStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }
 
 model User {
@@ -31,52 +43,92 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts   Account[]
-  contacts   Contact[]
-  deals      Deal[]
+  customers  Customer[]
+  sales      Sale[]
   activities Activity[]
 }
 
-enum Role {
-  USER
-  MANAGER
-  ADMIN
-}
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  loyaltyTier String?  @default("STANDARD")
+  totalSpent  Float    @default(0)
+  ownerId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-model Deal {
-  id        String    @id @default(cuid())
-  name      String
-  amount    Float
-  stage     Stage   @default(NEW)
-  closeDate DateTime?
-  accountId String?
-  ownerId   String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  account    Account?   @relation(fields: [accountId], references: [id])
   owner      User?      @relation(fields: [ownerId], references: [id])
+  sales      Sale[]
   activities Activity[]
+}
+
+model Game {
+  id          String    @id @default(cuid())
+  mobyGameId  Int?
+  name        String
+  platform    Platform
+  genre       String?
+  description String?
+  coverArtUrl String?
+  releaseDate DateTime?
+  price       Float
+  stockLevel  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  lineItems SaleLineItem[]
+}
+
+model Sale {
+  id          String     @id @default(cuid())
+  customerId  String
+  totalAmount Float
+  status      SaleStatus @default(PENDING)
+  saleDate    DateTime   @default(now())
+  ownerId     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  customer   Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  owner      User?          @relation(fields: [ownerId], references: [id])
+  lineItems  SaleLineItem[]
+  activities Activity[]
+}
+
+model SaleLineItem {
+  id           String   @id @default(cuid())
+  saleId       String
+  gameId       String
+  quantity     Int
+  pricePerUnit Float
+  subtotal     Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sale Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict)
+
+  @@unique([saleId, gameId])
 }
 
 model Activity {
-  id        String       @id @default(cuid())
-  type      ActivityType
-  subject   String
-  body      String?
-  dueAt     DateTime?
-  completed Boolean      @default(false)
-  ownerId   String?
-  dealId    String?
-  contactId String?
-  accountId String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id         String       @id @default(cuid())
+  type       ActivityType
+  subject    String
+  body       String?
+  dueAt      DateTime?
+  completed  Boolean      @default(false)
+  ownerId    String?
+  customerId String?
+  saleId     String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 
-  owner   User?    @relation(fields: [ownerId], references: [id])
-  deal    Deal?    @relation(fields: [dealId], references: [id])
-  contact Contact? @relation(fields: [contactId], references: [id])
-  account Account? @relation(fields: [accountId], references: [id])
+  owner    User?     @relation(fields: [ownerId], references: [id])
+  customer Customer? @relation(fields: [customerId], references: [id])
+  sale     Sale?     @relation(fields: [saleId], references: [id], onDelete: Cascade)
 }
 
 enum ActivityType {
@@ -84,35 +136,4 @@ enum ActivityType {
   TASK
   CALL
   MEETING
-}
-
-model Contact {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  email     String?
-  phone     String?
-  title     String?
-  accountId String?
-  ownerId   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  account    Account?   @relation(fields: [accountId], references: [id])
-  owner      User?      @relation(fields: [ownerId], references: [id])
-  activities Activity[]
-}
-
-model Account {
-  id         String     @id @default(cuid())
-  name       String
-  website    String?
-  industry   String?
-  ownerId    String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  owner      User?      @relation(fields: [ownerId], references: [id])
-  deals      Deal[]
-  activities Activity[]
-  contacts   Contact[]
 }
