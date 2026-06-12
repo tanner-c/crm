@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validateLoginForm, formatValidationErrors } from "../../lib/validation";
 
 type LoginFormProps = {
   onSubmit: (email: string, password: string) => void;
@@ -9,10 +10,42 @@ type LoginFormProps = {
 export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validation = validateLoginForm(email, password);
+    if (!validation.isValid) {
+      setFieldErrors(formatValidationErrors(validation.errors));
+      return;
+    }
+
+    setFieldErrors({});
     onSubmit(email, password);
+  };
+
+  const handleEmailBlur = () => {
+    if (email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setFieldErrors({ ...fieldErrors, email: "Invalid email format" });
+      } else {
+        const { ...rest } = fieldErrors;
+        delete rest.email;
+        setFieldErrors(rest);
+      }
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    if (password && password.length < 8) {
+      setFieldErrors({ ...fieldErrors, password: "Password must be at least 8 characters" });
+    } else if (password) {
+      const { ...rest } = fieldErrors;
+      delete rest.password;
+      setFieldErrors(rest);
+    }
   };
 
   return (
@@ -31,10 +64,17 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
           type="email"
           placeholder="Enter your email"
           value={email}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          className={`w-full p-3 border rounded-lg transition-all duration-200 focus:ring-2 focus:border-transparent ${fieldErrors.email
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:ring-blue-500"
+            }`}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={handleEmailBlur}
           required
         />
+        {fieldErrors.email && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+        )}
       </div>
 
       <div>
@@ -43,10 +83,17 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
           type="password"
           placeholder="Enter your password"
           value={password}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          className={`w-full p-3 border rounded-lg transition-all duration-200 focus:ring-2 focus:border-transparent ${fieldErrors.password
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:ring-blue-500"
+            }`}
           onChange={(e) => setPassword(e.target.value)}
+          onBlur={handlePasswordBlur}
           required
         />
+        {fieldErrors.password && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+        )}
       </div>
 
       <button
