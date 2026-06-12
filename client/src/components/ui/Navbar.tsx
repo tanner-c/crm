@@ -28,7 +28,7 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full h-16 gradient-bg flex items-center px-4 md:px-6 shadow-lg fade-in z-40">
-      <h1 className="text-white text-lg md:text-xl font-bold">🚀 My CRM</h1>
+      <h1 className="text-white text-lg md:text-xl font-bold">🎮 Game Store</h1>
 
       {/* Desktop Menu */}
       <div className="ml-auto hidden md:flex items-center space-x-4">
@@ -37,11 +37,17 @@ export function Navbar() {
             <Link to="/dashboard" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
               📊 Dashboard
             </Link>
-            <Link to="/accounts" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
-              🏢 Accounts
+            <Link to="/customers" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
+              👥 Customers
             </Link>
-            <Link to="/deals" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
-              💼 Deals
+            <Link to="/inventory" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
+              🎮 Inventory
+            </Link>
+            <Link to="/sales" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
+              💰 Sales
+            </Link>
+            <Link to="/reports" className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-1 rounded hover:bg-white/10">
+              📈 Reports
             </Link>
             <LogoutButton />
           </>}
@@ -70,18 +76,32 @@ export function Navbar() {
               📊 Dashboard
             </Link>
             <Link
-              to="/accounts"
+              to="/customers"
               className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-2 rounded hover:bg-white/10"
               onClick={() => setIsMenuOpen(false)}
             >
-              🏢 Accounts
+              👥 Customers
             </Link>
             <Link
-              to="/deals"
+              to="/inventory"
               className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-2 rounded hover:bg-white/10"
               onClick={() => setIsMenuOpen(false)}
             >
-              💼 Deals
+              🎮 Inventory
+            </Link>
+            <Link
+              to="/sales"
+              className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-2 rounded hover:bg-white/10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              💰 Sales
+            </Link>
+            <Link
+              to="/reports"
+              className="text-gray-200 hover:text-white transition-colors duration-200 px-2 py-2 rounded hover:bg-white/10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              📈 Reports
             </Link>
             <div className="pt-2">
               <LogoutButton />
