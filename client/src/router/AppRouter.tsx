@@ -3,10 +3,11 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import { Navbar } from "../components/ui/Navbar";
-import AccountsTable from "../pages/AccountsTable";
-import Deals from "../pages/Deals";
+import CustomersTable from "../pages/CustomersTable";
+import Sales from "../pages/Sales";
+import Inventory from "../pages/Inventory";
+import Reports from "../pages/Reports";
 import RedirectLoggedIn from "./RedirectLoggedIn";
-import EditAccount from "../pages/EditAccount";
 
 export default function AppRouter() {
   ''
@@ -21,9 +22,10 @@ export default function AppRouter() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/accounts" element={<AccountsTable />} />
-            <Route path="/deals" element={<Deals />} />
-            <Route path="/accounts/:id" element={<EditAccount />} />
+            <Route path="/customers" element={<CustomersTable />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/reports" element={<Reports />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" />} />
