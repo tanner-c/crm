@@ -3,6 +3,7 @@ Game Store Management System
 
 [API Specifications](SPECIFICATIONS.md)
 [UML Class Diagram](docs/uml_class_diagram.md)
+[Application Design Diagram](docs/design_diagrams.md)
 [Manual Testing Checklist](#manual-testing)
 
 A full stack game retail management application for managing inventory, sales, and customer loyalty. Built with React 19, Express, PostgreSQL, and Prisma ORM.
