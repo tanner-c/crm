@@ -77,6 +77,7 @@ describe('Customers API (mocked)', () => {
         expect(res.body.data).toHaveProperty('totalSpent');
     });
 
+    // TC-05: Add Customer
     test('POST /api/customers creates customer', async () => {
         const res = await request(app).post('/api/customers').send({
             name: 'Jane Smith',
@@ -102,10 +103,19 @@ describe('Customers API (mocked)', () => {
         expect(res.status).toBe(200);
     });
 
+    // TC-06: Validation Check (Customer empty name)
     test('POST /api/customers validates required name field', async () => {
         const res = await request(app).post('/api/customers').send({
             email: 'test@example.com'
         });
         expect(res.status).toBe(400);
+    });
+
+    // TC-07: Owner Lookup
+    test('GET /api/customers/user/:userId returns customers for a user', async () => {
+        const res = await request(app).get('/api/customers/user/u1');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('data');
+        expect(Array.isArray(res.body.data)).toBe(true);
     });
 });

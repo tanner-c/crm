@@ -195,6 +195,7 @@ describe('Users API (mocked)', () => {
         expect(res.body).toHaveProperty('error', 'Invalid role');
     });
 
+    // TC-04: Role Restrictions
     test('POST /api/users prevents non-admin setting a role', async () => {
         const res = await request(app)
             .post('/api/users')

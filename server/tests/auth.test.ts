@@ -38,6 +38,7 @@ describe('Auth API and Utilities', () => {
     });
 
     describe('POST /api/auth/register', () => {
+        // TC-01: User Registration
         test('should register a new user successfully', async () => {
             const res = await request(app)
                 .post('/api/auth/register')
@@ -57,6 +58,7 @@ describe('Auth API and Utilities', () => {
     });
 
     describe('POST /api/auth/login', () => {
+        // TC-02: User Login
         test('should login successfully with correct credentials', async () => {
             // First register a user
             await request(app)
@@ -132,6 +134,7 @@ describe('Auth API and Utilities', () => {
             expect(res.body.user).toHaveProperty('email', 'john@example.com');
         });
 
+        // TC-03: Unauthorized Access (Missing/Invalid Token)
         test('should return 401 when token is missing', async () => {
             const res = await request(app).get('/api/auth/me');
             expect(res.status).toBe(401);

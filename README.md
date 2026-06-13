@@ -16,6 +16,7 @@ Game Store Management System
 > * [Test Changes Summary](docs/test_changes_summary.md)
 > * [Manual Testing Checklist](#manual-testing)
 > * [Test Results](docs/test_suite_results.png)
+> * [Test Plan](docs/test_plan.md)
 
 A full stack game retail management application for managing inventory, sales, and customer loyalty. Built with React 19, Express, PostgreSQL, and Prisma ORM.
 

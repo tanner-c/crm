@@ -125,6 +125,21 @@ describe('Sales API (mocked)', () => {
         expect(res.body.data).toHaveProperty('lineItems');
     });
 
+    // TC-11: Create Pending Sale
+    test('POST /api/sales creates sale in PENDING status', async () => {
+        const res = await request(app).post('/api/sales').send({
+            customerId: 'c1',
+            lineItems: [
+                { gameId: 'g1', quantity: 2 }
+            ],
+            status: 'PENDING'
+        });
+        expect(res.status).toBe(201);
+        expect(res.body.data).toHaveProperty('id');
+        expect(res.body.data).toHaveProperty('status', 'PENDING');
+    });
+
+    // TC-12: Complete Sale
     test('POST /api/sales creates sale with line items', async () => {
         const res = await request(app).post('/api/sales').send({
             customerId: 'c1',
@@ -139,6 +154,7 @@ describe('Sales API (mocked)', () => {
         expect(res.body.data).toHaveProperty('totalAmount');
     });
 
+    // TC-13: Cancel Completed Sale
     test('PATCH /api/sales/:id updates sale', async () => {
         const res = await request(app).patch('/api/sales/s1').send({
             status: 'CANCELLED'
@@ -147,6 +163,7 @@ describe('Sales API (mocked)', () => {
         expect(res.body.data).toHaveProperty('id', 's1');
     });
 
+    // TC-14: Delete Completed Sale
     test('DELETE /api/sales/:id deletes sale', async () => {
         const res = await request(app).delete('/api/sales/s1');
         expect(res.status).toBe(200);

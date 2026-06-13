@@ -113,6 +113,7 @@ describe('Inventory (Games) API (mocked)', () => {
         expect(res.body.data).toHaveProperty('stockLevel');
     });
 
+    // TC-08: Add Game Manually
     test('POST /api/inventory creates game', async () => {
         const res = await request(app).post('/api/inventory').send({
             name: 'The Witcher 3',
@@ -127,6 +128,17 @@ describe('Inventory (Games) API (mocked)', () => {
         expect(res.body.data).toHaveProperty('name', 'The Witcher 3');
     });
 
+    // TC-09: Price Check
+    test('POST /api/inventory validates negative price', async () => {
+        const res = await request(app).post('/api/inventory').send({
+            name: 'The Witcher 3',
+            platform: 'PC',
+            price: -5.00
+        });
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty('error', 'Valid price is required');
+    });
+
     test('PATCH /api/inventory/:id updates game', async () => {
         const res = await request(app).patch('/api/inventory/g1').send({
             price: 29.99,
@@ -139,6 +151,16 @@ describe('Inventory (Games) API (mocked)', () => {
     test('DELETE /api/inventory/:id deletes game', async () => {
         const res = await request(app).delete('/api/inventory/g1');
         expect(res.status).toBe(200);
+    });
+
+    // TC-10: Delete Restriction
+    test('DELETE /api/inventory/:id returns 400 if game has sales', async () => {
+        const prisma = require('../src/prisma/client').default;
+        prisma.game.delete.mockRejectedValueOnce({ code: 'P2003' });
+
+        const res = await request(app).delete('/api/inventory/g1');
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty('error', 'Cannot delete game that has sales');
     });
 
     test('POST /api/inventory validates required fields', async () => {
