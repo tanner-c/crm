@@ -146,7 +146,22 @@ export default function Inventory() {
 
   const renderGameRow = (game: Game) => (
     <tr className="hover:bg-gray-50">
-      <td className="px-4 md:px-6 py-4 text-sm font-semibold text-gray-800">{game.name}</td>
+      <td className="px-4 md:px-6 py-4 text-sm font-semibold text-gray-800">
+        <div className="flex items-center gap-3">
+          {game.coverArtUrl ? (
+            <img
+              src={game.coverArtUrl}
+              alt={game.name}
+              className="w-10 h-14 object-cover rounded shadow-xs shrink-0"
+            />
+          ) : (
+            <div className="w-10 h-14 bg-gray-100 border border-gray-200 flex items-center justify-center rounded text-lg select-none shrink-0">
+              🎮
+            </div>
+          )}
+          <span>{game.name}</span>
+        </div>
+      </td>
       <td className="px-4 md:px-6 py-4 text-sm text-gray-600">{game.platform}</td>
       <td className="px-4 md:px-6 py-4 text-sm text-gray-600">{game.genre || '-'}</td>
       <td className="px-4 md:px-6 py-4 text-sm font-semibold text-green-600">${game.price.toFixed(2)}</td>
@@ -174,6 +189,7 @@ export default function Inventory() {
       </td>
     </tr>
   );
+
 
   return (
     <div className="min-h-screen gradient-bg p-4 md:p-6 fade-in">
@@ -306,20 +322,35 @@ export default function Inventory() {
             {searchResults.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {searchResults.map((game) => (
-                  <div key={`${game.mobyGameId}-${game.name}`} className="border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-2">{game.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {game.platforms?.join(', ')}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {game.genres?.join(', ')}
-                    </p>
-                    <button
-                      onClick={() => handleAddFromSearch(game)}
-                      className="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    >
-                      Add to Inventory
-                    </button>
+                  <div key={`${game.mobyGameId}-${game.name}`} className="border rounded-lg p-4 flex gap-4">
+                    {game.coverUrl ? (
+                      <img
+                        src={game.coverUrl}
+                        alt={game.name}
+                        className="w-16 h-20 object-cover rounded shadow-xs shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-20 bg-gray-100 border border-gray-200 flex items-center justify-center rounded text-xl select-none shrink-0">
+                        🎮
+                      </div>
+                    )}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-base mb-1 leading-tight">{game.name}</h3>
+                        <p className="text-xs text-gray-500 mb-1">
+                          {game.platforms?.join(', ')}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {game.genres?.join(', ')}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleAddFromSearch(game)}
+                        className="mt-3 w-full px-3 py-2 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700"
+                      >
+                        Add to Inventory
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
