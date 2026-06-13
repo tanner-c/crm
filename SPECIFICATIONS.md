@@ -23,7 +23,6 @@ model User {
   updatedAt DateTime @updatedAt
 
   sales     Sale[]
-  activities Activity[]
 }
 
 enum Role {
@@ -57,7 +56,6 @@ model Customer {
   updatedAt    DateTime     @updatedAt
 
   sales        Sale[]
-  activities   Activity[]
 }
 
 enum LoyaltyTier {
@@ -181,44 +179,6 @@ model SaleLineItem {
 - `subtotal`: quantity × pricePerUnit (stored for historical accuracy)
 - `createdAt`, `updatedAt`: Timestamps
 
----
-
-### 1.6 Activity
-
-```prisma
-model Activity {
-  id         String       @id @default(cuid())
-  type       ActivityType
-  subject    String
-  body       String?
-  ownerId    String?
-  customerId String?
-  saleId     String?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-
-  owner      User?        @relation(fields: [ownerId], references: [id])
-  customer   Customer?    @relation(fields: [customerId], references: [id])
-  sale       Sale?        @relation(fields: [saleId], references: [id])
-}
-
-enum ActivityType {
-  NOTE       // General note
-  TASK       // Task to complete
-  CALL       // Phone call
-  MEETING    // In-person meeting
-}
-```
-
-**Fields:**
-- `id`: Unique identifier (cuid)
-- `type`: Activity type
-- `subject`: Subject/title
-- `body`: Details or description
-- `ownerId`: Staff member who performed activity
-- `customerId`: Related customer (optional)
-- `saleId`: Related sale (optional)
-- `createdAt`, `updatedAt`: Timestamps
 
 ---
 
@@ -829,76 +789,6 @@ Get sales performance metrics per user.
 }
 ```
 
----
-
-### 2.7 Activities
-
-#### GET `/activities`
-List activities (filter by customerId or saleId).
-
-**Query Parameters:**
-- `customerId`: Filter by customer
-- `saleId`: Filter by sale
-
-**Response (200):**
-```json
-{
-  "data": [
-    {
-      "id": "cuid",
-      "type": "NOTE|TASK|CALL|MEETING",
-      "subject": "string",
-      "body": "string",
-      "ownerId": "cuid",
-      "customerId": "cuid",
-      "saleId": "cuid",
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
-    }
-  ]
-}
-```
-
----
-
-#### POST `/activities`
-Create activity.
-
-**Request Body:**
-```json
-{
-  "type": "NOTE|TASK|CALL|MEETING (required)",
-  "subject": "string (required)",
-  "body": "string (optional)",
-  "customerId": "string (optional)",
-  "saleId": "string (optional)"
-}
-```
-
-**Response (201):** Activity object
-
----
-
-#### PATCH `/activities/:id`
-Update activity.
-
-**Request Body:**
-```json
-{
-  "subject": "string (optional)",
-  "body": "string (optional)",
-  "type": "NOTE|TASK|CALL|MEETING (optional)"
-}
-```
-
-**Response (200):** Updated activity object
-
----
-
-#### DELETE `/activities/:id`
-Delete activity.
-
-**Response (204):** No content
 
 ---
 
@@ -927,7 +817,7 @@ All errors return JSON with the following format:
 All endpoints except `/auth/register` and `/auth/login` require JWT token.
 
 **Permissions by Role:**
-- `USER`: Can view/create sales, view inventory, manage own activities
+- `USER`: Can view/create sales, view inventory
 - `MANAGER`: All USER permissions + view reports
 - `ADMIN`: Full system access + user management
 
@@ -954,6 +844,5 @@ Default seed creates:
 - 15 customers with varied loyalty tiers
 - 23 games across 5 platforms
 - 8 sample sales transactions
-- Activity log entries for audit trail
 
 Reset with: `npx prisma db seed`
