@@ -4,7 +4,7 @@
 
 This document describes all backend routes, data models, and API behaviors for the Game Store Management System.
 
-All routes are prefixed with `/api/` and require JWT authentication (except login/register).
+All routes are prefixed with `/api/` and require JWT authentication (except register, login, and public registration).
 
 ---
 
@@ -22,7 +22,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sales     Sale[]
+  customers  Customer[]
+  sales      Sale[]
 }
 
 enum Role {
@@ -46,22 +47,18 @@ enum Role {
 
 ```prisma
 model Customer {
-  id           String       @id @default(cuid())
-  name         String
-  email        String?
-  phone        String?
-  loyaltyTier  LoyaltyTier  @default(STANDARD)
-  totalSpent   Float        @default(0)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  loyaltyTier String?  @default("STANDARD")
+  totalSpent  Float    @default(0)
+  ownerId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  sales        Sale[]
-}
-
-enum LoyaltyTier {
-  STANDARD    // Base tier
-  GOLD        // 5%+ discount eligible
-  PLATINUM    // 10%+ discount eligible
+  owner      User?      @relation(fields: [ownerId], references: [id])
+  sales      Sale[]
 }
 ```
 
@@ -70,8 +67,9 @@ enum LoyaltyTier {
 - `name`: Customer name
 - `email`: Optional email address
 - `phone`: Optional phone number
-- `loyaltyTier`: Loyalty tier affecting discounts
-- `totalSpent`: Accumulated spending amount (auto-calculated)
+- `loyaltyTier`: Optional string field indicating customer loyalty level (standard values: `"STANDARD"`, `"GOLD"`, `"PLATINUM"`)
+- `totalSpent`: Accumulated spending amount
+- `ownerId`: Optional foreign key to User indicating assigned sales representative / owner
 - `createdAt`, `updatedAt`: Timestamps
 
 ---
@@ -80,19 +78,20 @@ enum LoyaltyTier {
 
 ```prisma
 model Game {
-  id           String        @id @default(cuid())
-  name         String
-  platform     Platform
-  genre        String?
-  description  String?
-  price        Float
-  stockLevel   Int           @default(0)
-  coverUrl     String?       // URL from MobyGames
-  mobyGameId   Int?          // MobyGames unique ID
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id          String    @id @default(cuid())
+  mobyGameId  Int?
+  name        String
+  platform    Platform
+  genre       String?
+  description String?
+  coverArtUrl String?
+  releaseDate DateTime?
+  price       Float
+  stockLevel  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  lineItems    SaleLineItem[]
+  lineItems SaleLineItem[]
 }
 
 enum Platform {
@@ -107,14 +106,15 @@ enum Platform {
 
 **Fields:**
 - `id`: Unique identifier (cuid)
+- `mobyGameId`: Optional reference to MobyGames database ID
 - `name`: Game title
 - `platform`: Target platform
 - `genre`: Game genre (RPG, FPS, Strategy, etc.)
 - `description`: Game description/synopsis
+- `coverArtUrl`: Optional URL to game cover art (from MobyGames or custom)
+- `releaseDate`: Optional game release date
 - `price`: Retail price per unit
 - `stockLevel`: Current inventory count
-- `coverUrl`: URL to game cover art (from MobyGames)
-- `mobyGameId`: Reference to MobyGames database ID
 - `createdAt`, `updatedAt`: Timestamps
 
 ---
@@ -123,16 +123,18 @@ enum Platform {
 
 ```prisma
 model Sale {
-  id           String      @id @default(cuid())
-  customerId   String
-  totalAmount  Float       @default(0)
-  status       SaleStatus  @default(PENDING)
-  saleDate     DateTime    @default(now())
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id          String     @id @default(cuid())
+  customerId  String
+  totalAmount Float
+  status      SaleStatus @default(PENDING)
+  saleDate    DateTime   @default(now())
+  ownerId     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  customer     Customer    @relation(fields: [customerId], references: [id])
-  lineItems    SaleLineItem[]
+  customer   Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  owner      User?          @relation(fields: [ownerId], references: [id])
+  lineItems  SaleLineItem[]
 }
 
 enum SaleStatus {
@@ -144,10 +146,11 @@ enum SaleStatus {
 
 **Fields:**
 - `id`: Unique identifier (cuid)
-- `customerId`: Reference to Customer
-- `totalAmount`: Total sale amount (auto-calculated from line items)
+- `customerId`: Reference to Customer (with cascade delete constraint)
+- `totalAmount`: Total sale amount
 - `status`: Sale status affecting inventory treatment
 - `saleDate`: Date of sale
+- `ownerId`: Optional reference to User representing the seller
 - `createdAt`, `updatedAt`: Timestamps
 
 ---
@@ -156,49 +159,63 @@ enum SaleStatus {
 
 ```prisma
 model SaleLineItem {
-  id           String    @id @default(cuid())
+  id           String   @id @default(cuid())
   saleId       String
   gameId       String
   quantity     Int
   pricePerUnit Float
-  subtotal     Float     // quantity × pricePerUnit
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  subtotal     Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  sale         Sale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  game         Game      @relation(fields: [gameId], references: [id])
+  sale Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Restrict)
+
+  @@unique([saleId, gameId])
 }
 ```
 
 **Fields:**
 - `id`: Unique identifier (cuid)
 - `saleId`: Reference to Sale (cascade delete)
-- `gameId`: Reference to Game
+- `gameId`: Reference to Game (restrict delete)
 - `quantity`: Number of units sold
 - `pricePerUnit`: Price per unit at time of sale
-- `subtotal`: quantity × pricePerUnit (stored for historical accuracy)
+- `subtotal`: quantity × pricePerUnit
 - `createdAt`, `updatedAt`: Timestamps
-
 
 ---
 
 ## 2. API Endpoints
 
 All endpoints return JSON with status codes:
-- `200 OK` - Successful GET/PATCH
-- `201 Created` - Successful POST
-- `204 No Content` - Successful DELETE
+- `200 OK` - Successful operation
+- `201 Created` - Successful resource creation
 - `400 Bad Request` - Validation error
 - `401 Unauthorized` - Missing/invalid JWT
 - `403 Forbidden` - Insufficient permissions
 - `404 Not Found` - Resource not found
+- `409 Conflict` - Conflict (e.g. unique constraint violated)
 - `500 Internal Server Error` - Server error
 
 ---
 
-### 2.1 Authentication
+### 2.1 Authentication & Status
 
-#### POST `/auth/register`
+#### GET `/api/status`
+Check system status.
+
+**Response (200):**
+```json
+{
+  "status": "OK",
+  "timestamp": "2026-06-14T20:49:16.000Z"
+}
+```
+
+---
+
+#### POST `/api/auth/register`
 Register new user account.
 
 **Request Body:**
@@ -219,15 +236,15 @@ Register new user account.
     "name": "string",
     "email": "string",
     "role": "USER",
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
   }
 }
 ```
 
 ---
 
-#### POST `/auth/login`
+#### POST `/api/auth/login`
 Authenticate user and receive JWT token.
 
 **Request Body:**
@@ -247,15 +264,15 @@ Authenticate user and receive JWT token.
     "name": "string",
     "email": "string",
     "role": "USER",
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
   }
 }
 ```
 
 ---
 
-#### GET `/auth/me`
+#### GET `/api/auth/me`
 Get current authenticated user.
 
 **Headers:**
@@ -271,8 +288,8 @@ Authorization: Bearer {token}
     "name": "string",
     "email": "string",
     "role": "USER|MANAGER|ADMIN",
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
   }
 }
 ```
@@ -281,70 +298,120 @@ Authorization: Bearer {token}
 
 ### 2.2 Users
 
-#### GET `/users`
-List all users (Admin only).
+#### GET `/api/users`
+List all users (authenticated only).
 
-**Query Parameters:**
-- `page`: Page number (default 1)
-- `limit`: Results per page (default 10)
+**Response (200):**
+```json
+[
+  {
+    "id": "cuid",
+    "name": "string",
+    "email": "string",
+    "role": "USER|MANAGER|ADMIN",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
+  }
+]
+```
+
+---
+
+#### GET `/api/users/:id`
+Get single user by ID.
 
 **Response (200):**
 ```json
 {
-  "data": [
-    {
-      "id": "cuid",
-      "name": "string",
-      "email": "string",
-      "role": "USER|MANAGER|ADMIN",
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
-    }
-  ],
-  "total": 5
+  "id": "cuid",
+  "name": "string",
+  "email": "string",
+  "role": "USER|MANAGER|ADMIN",
+  "createdAt": "2026-06-14T20:49:16.000Z",
+  "updatedAt": "2026-06-14T20:49:16.000Z"
 }
 ```
 
 ---
 
-#### GET `/users/:id`
-Get single user by ID.
+#### POST `/api/users`
+Create new user. Public registration is allowed. If a role is specified, only admins can assign it.
 
-**Response (200):** Single user object
+**Request Body:**
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "role": "USER|MANAGER|ADMIN (optional)"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "cuid",
+  "name": "string",
+  "email": "string",
+  "role": "USER|MANAGER|ADMIN",
+  "createdAt": "2026-06-14T20:49:16.000Z",
+  "updatedAt": "2026-06-14T20:49:16.000Z"
+}
+```
 
 ---
 
-#### PATCH `/users/:id`
+#### PATCH `/api/users/:id`
 Update user (Admin only).
 
 **Request Body:**
 ```json
 {
   "name": "string (optional)",
+  "email": "string (optional)",
   "role": "USER|MANAGER|ADMIN (optional)"
 }
 ```
 
-**Response (200):** Updated user object
+**Response (200):**
+```json
+{
+  "id": "cuid",
+  "name": "string",
+  "email": "string",
+  "role": "USER|MANAGER|ADMIN",
+  "createdAt": "2026-06-14T20:49:16.000Z",
+  "updatedAt": "2026-06-14T20:49:16.000Z"
+}
+```
 
 ---
 
-#### DELETE `/users/:id`
+#### DELETE `/api/users/:id`
 Delete user (Admin only).
 
-**Response (204):** No content
+**Response (200):**
+```json
+{
+  "id": "cuid",
+  "name": "string",
+  "email": "string",
+  "role": "USER|MANAGER|ADMIN",
+  "createdAt": "2026-06-14T20:49:16.000Z",
+  "updatedAt": "2026-06-14T20:49:16.000Z"
+}
+```
 
 ---
 
 ### 2.3 Customers
 
-#### GET `/customers`
-List all customers (paginated, filterable).
+#### GET `/api/customers`
+List all customers (paginated).
 
 **Query Parameters:**
 - `page`: Page number (default 1)
-- `limit`: Results per page (default 10)
-- `loyaltyTier`: Filter by tier (STANDARD, GOLD, PLATINUM)
+- `limit`: Results per page (default 10, max 100)
 
 **Response (200):**
 ```json
@@ -357,17 +424,27 @@ List all customers (paginated, filterable).
       "phone": "string",
       "loyaltyTier": "STANDARD|GOLD|PLATINUM",
       "totalSpent": 1500.50,
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "ownerId": "cuid",
+      "createdAt": "2026-06-14T20:49:16.000Z",
+      "updatedAt": "2026-06-14T20:49:16.000Z",
+      "owner": {
+        "id": "cuid",
+        "name": "string",
+        "email": "string",
+        "role": "USER"
+      }
     }
   ],
-  "total": 42
+  "total": 42,
+  "page": 1,
+  "limit": 10,
+  "hasMore": true
 }
 ```
 
 ---
 
-#### POST `/customers`
+#### POST `/api/customers`
 Create new customer.
 
 **Request Body:**
@@ -376,34 +453,118 @@ Create new customer.
   "name": "string (required)",
   "email": "string (optional)",
   "phone": "string (optional)",
-  "loyaltyTier": "STANDARD|GOLD|PLATINUM (optional)"
+  "loyaltyTier": "string (optional, default STANDARD)",
+  "ownerId": "string (optional)"
 }
 ```
 
-**Response (201):** Customer object with auto-generated `id`
+**Response (201):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "name": "string",
+    "email": "string",
+    "phone": "string",
+    "loyaltyTier": "STANDARD",
+    "totalSpent": 0,
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "owner": {
+      "id": "cuid",
+      "name": "string",
+      "email": "string",
+      "role": "USER"
+    }
+  }
+}
+```
 
 ---
 
-#### GET `/customers/:id`
-Get customer details with sales history.
+#### GET `/api/customers/:id`
+Get customer details with sales history and owner info.
 
 **Response (200):**
 ```json
 {
-  "id": "cuid",
-  "name": "string",
-  "email": "string",
-  "phone": "string",
-  "loyaltyTier": "STANDARD",
-  "totalSpent": 1500.50,
-  "createdAt": "2024-01-01T00:00:00Z",
-  "updatedAt": "2024-01-01T00:00:00Z",
-  "sales": [
+  "data": {
+    "id": "cuid",
+    "name": "string",
+    "email": "string",
+    "phone": "string",
+    "loyaltyTier": "STANDARD",
+    "totalSpent": 1500.50,
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "owner": {
+      "id": "cuid",
+      "name": "string",
+      "email": "string",
+      "role": "USER"
+    },
+    "sales": [
+      {
+        "id": "cuid",
+        "customerId": "cuid",
+        "totalAmount": 150.00,
+        "status": "COMPLETED",
+        "saleDate": "2026-06-14T20:49:16.000Z",
+        "ownerId": "cuid",
+        "createdAt": "2026-06-14T20:49:16.000Z",
+        "updatedAt": "2026-06-14T20:49:16.000Z",
+        "lineItems": [
+          {
+            "id": "cuid",
+            "saleId": "cuid",
+            "gameId": "cuid",
+            "quantity": 2,
+            "pricePerUnit": 75.00,
+            "subtotal": 150.00,
+            "createdAt": "2026-06-14T20:49:16.000Z",
+            "updatedAt": "2026-06-14T20:49:16.000Z",
+            "game": {
+              "id": "cuid",
+              "name": "string",
+              "price": 75.00
+            }
+          }
+        ],
+        "owner": {
+          "id": "cuid",
+          "name": "string"
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### GET `/api/customers/user/:userId`
+Get all customers assigned to a specific user/owner.
+
+**Response (200):**
+```json
+{
+  "data": [
     {
       "id": "cuid",
-      "totalAmount": 150.00,
-      "status": "COMPLETED",
-      "saleDate": "2024-01-01T00:00:00Z"
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "loyaltyTier": "STANDARD",
+      "totalSpent": 1500.50,
+      "ownerId": "userId",
+      "createdAt": "2026-06-14T20:49:16.000Z",
+      "updatedAt": "2026-06-14T20:49:16.000Z",
+      "owner": {
+        "id": "userId",
+        "name": "string"
+      }
     }
   ]
 }
@@ -411,7 +572,7 @@ Get customer details with sales history.
 
 ---
 
-#### PATCH `/customers/:id`
+#### PATCH `/api/customers/:id`
 Update customer.
 
 **Request Body:**
@@ -420,30 +581,56 @@ Update customer.
   "name": "string (optional)",
   "email": "string (optional)",
   "phone": "string (optional)",
-  "loyaltyTier": "STANDARD|GOLD|PLATINUM (optional)"
+  "loyaltyTier": "string (optional)",
+  "totalSpent": "number (optional)",
+  "ownerId": "string (optional)"
 }
 ```
 
-**Response (200):** Updated customer object
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "name": "string",
+    "email": "string",
+    "phone": "string",
+    "loyaltyTier": "STANDARD",
+    "totalSpent": 1500.50,
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "owner": {
+      "id": "cuid",
+      "name": "string"
+    }
+  }
+}
+```
 
 ---
 
-#### DELETE `/customers/:id`
+#### DELETE `/api/customers/:id`
 Delete customer.
 
-**Response (204):** No content
+**Response (200):**
+```json
+{
+  "message": "Customer deleted successfully"
+}
+```
 
 ---
 
 ### 2.4 Inventory (Games)
 
-#### GET `/inventory`
+#### GET `/api/inventory`
 List all games with optional filtering.
 
 **Query Parameters:**
 - `page`: Page number (default 1)
-- `limit`: Results per page (default 10)
-- `platform`: Filter by platform (PC, PLAYSTATION, XBOX, NINTENDO, MOBILE, OTHER)
+- `limit`: Results per page (default 10, max 100)
+- `platform`: Filter by platform (PC, PLAYSTATION, XBOX, NINTENDO, MOBILE, OTHER - case insensitive)
 - `genre`: Filter by genre (case-insensitive substring match)
 - `minPrice`: Minimum price filter
 - `maxPrice`: Maximum price filter
@@ -454,26 +641,30 @@ List all games with optional filtering.
   "data": [
     {
       "id": "cuid",
+      "mobyGameId": 12345,
       "name": "string",
-      "platform": "PC|PLAYSTATION|XBOX|NINTENDO|MOBILE|OTHER",
+      "platform": "PC",
       "genre": "string",
       "description": "string",
+      "coverArtUrl": "https://...",
+      "releaseDate": "2026-06-14T20:49:16.000Z",
       "price": 49.99,
       "stockLevel": 25,
-      "coverUrl": "https://...",
-      "mobyGameId": 12345,
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "createdAt": "2026-06-14T20:49:16.000Z",
+      "updatedAt": "2026-06-14T20:49:16.000Z"
     }
   ],
-  "total": 156
+  "total": 156,
+  "page": 1,
+  "limit": 10,
+  "hasMore": true
 }
 ```
 
 ---
 
-#### POST `/inventory`
-Manually add game to inventory.
+#### POST `/api/inventory`
+Manually add game to inventory (Admin only).
 
 **Request Body:**
 ```json
@@ -482,128 +673,209 @@ Manually add game to inventory.
   "platform": "PC|PLAYSTATION|... (required)",
   "genre": "string (optional)",
   "description": "string (optional)",
+  "coverArtUrl": "string (optional)",
+  "releaseDate": "ISO string (optional)",
   "price": "number (required)",
-  "stockLevel": "number (optional, default 0)",
-  "coverUrl": "string (optional)",
-  "mobyGameId": "number (optional)"
+  "stockLevel": "number (optional, default 0)"
 }
 ```
 
-**Response (201):** Game object
+**Response (201):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "mobyGameId": null,
+    "name": "string",
+    "platform": "PC",
+    "genre": "string",
+    "description": "string",
+    "coverArtUrl": "https://...",
+    "releaseDate": "2026-06-14T20:49:16.000Z",
+    "price": 49.99,
+    "stockLevel": 25,
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
+  }
+}
+```
 
 ---
 
-#### GET `/inventory/search?q=<query>`
+#### GET `/api/inventory/search?q=<query>`
 Search MobyGames API for games.
 
 **Query Parameters:**
-- `q`: Search query (game name)
-- `timeout`: Optional timeout in ms (default 5000)
+- `q`: Search query (game name, minimum 2 characters)
 
 **Response (200):**
 ```json
 {
-  "results": [
+  "data": [
     {
       "mobyGameId": 12345,
       "name": "string",
-      "genres": ["string"],
-      "platforms": ["string"],
       "description": "string",
-      "coverUrl": "https://..."
+      "platforms": ["string"],
+      "genres": ["string"],
+      "coverUrl": "https://...",
+      "releaseDate": "2026-06-14T20:49:16.000Z"
     }
-  ]
+  ],
+  "query": "string",
+  "count": 1
 }
 ```
 
 ---
 
-#### POST `/inventory/add-from-search`
-Add game to inventory using MobyGames search results.
+#### POST `/api/inventory/add-from-search`
+Add game to inventory using MobyGames search results (Admin only).
 
 **Request Body:**
 ```json
 {
-  "name": "string",
-  "platform": "PC|PLAYSTATION|...",
-  "mobyGameId": 12345,
-  "price": 49.99,
-  "stockLevel": 10,
+  "mobyGameId": 12345 (optional),
+  "name": "string (required)",
+  "platform": "PC|PLAYSTATION|... (required)",
   "genre": "string (optional)",
   "description": "string (optional)",
-  "coverUrl": "string (optional)"
+  "coverArtUrl": "string (optional)",
+  "releaseDate": "ISO string (optional)",
+  "price": "number (optional, default 29.99)",
+  "stockLevel": "number (optional, default 0)"
 }
 ```
 
-**Response (201):** Game object
+**Response (201):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "mobyGameId": 12345,
+    "name": "string",
+    "platform": "PC",
+    "genre": "string",
+    "description": "string",
+    "coverArtUrl": "https://...",
+    "releaseDate": "2026-06-14T20:49:16.000Z",
+    "price": 29.99,
+    "stockLevel": 10,
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
+  }
+}
+```
 
 ---
 
-#### GET `/inventory/:id`
-Get game details with sales history.
+#### GET `/api/inventory/:id`
+Get game details with sales line items history.
 
 **Response (200):**
 ```json
 {
-  "id": "cuid",
-  "name": "string",
-  "platform": "PC",
-  "genre": "string",
-  "description": "string",
-  "price": 49.99,
-  "stockLevel": 25,
-  "coverUrl": "https://...",
-  "mobyGameId": 12345,
-  "createdAt": "2024-01-01T00:00:00Z",
-  "updatedAt": "2024-01-01T00:00:00Z",
-  "lineItems": [
-    {
-      "id": "cuid",
-      "saleId": "cuid",
-      "quantity": 2,
-      "pricePerUnit": 49.99,
-      "subtotal": 99.98,
-      "createdAt": "2024-01-01T00:00:00Z"
-    }
-  ]
+  "data": {
+    "id": "cuid",
+    "mobyGameId": 12345,
+    "name": "string",
+    "platform": "PC",
+    "genre": "string",
+    "description": "string",
+    "coverArtUrl": "https://...",
+    "releaseDate": "2026-06-14T20:49:16.000Z",
+    "price": 49.99,
+    "stockLevel": 25,
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "lineItems": [
+      {
+        "id": "cuid",
+        "saleId": "cuid",
+        "gameId": "cuid",
+        "quantity": 2,
+        "pricePerUnit": 49.99,
+        "subtotal": 99.98,
+        "createdAt": "2026-06-14T20:49:16.000Z",
+        "updatedAt": "2026-06-14T20:49:16.000Z",
+        "sale": {
+          "id": "cuid",
+          "customerId": "cuid",
+          "totalAmount": 99.98,
+          "status": "COMPLETED",
+          "saleDate": "2026-06-14T20:49:16.000Z"
+        }
+      }
+    ]
+  }
 }
 ```
 
 ---
 
-#### PATCH `/inventory/:id`
-Update game.
+#### PATCH `/api/inventory/:id`
+Update game details (Admin only).
 
 **Request Body:**
 ```json
 {
   "name": "string (optional)",
+  "platform": "PC|PLAYSTATION|... (optional)",
   "genre": "string (optional)",
   "description": "string (optional)",
+  "coverArtUrl": "string (optional)",
+  "releaseDate": "ISO string (optional)",
   "price": "number (optional)",
   "stockLevel": "number (optional)"
 }
 ```
 
-**Response (200):** Updated game object
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "mobyGameId": 12345,
+    "name": "string",
+    "platform": "PC",
+    "genre": "string",
+    "description": "string",
+    "coverArtUrl": "https://...",
+    "releaseDate": "2026-06-14T20:49:16.000Z",
+    "price": 49.99,
+    "stockLevel": 30,
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z"
+  }
+}
+```
 
 ---
 
-#### DELETE `/inventory/:id`
-Delete game from inventory.
+#### DELETE `/api/inventory/:id`
+Delete game from inventory (Admin only). If the game has existing sales line items, the deletion will fail with a `400 Bad Request`.
 
-**Response (204):** No content
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "name": "string"
+  },
+  "message": "Game removed from inventory"
+}
+```
 
 ---
 
 ### 2.5 Sales
 
-#### GET `/sales`
+#### GET `/api/sales`
 List all sales (paginated).
 
 **Query Parameters:**
 - `page`: Page number (default 1)
-- `limit`: Results per page (default 10)
+- `limit`: Results per page (default 10, max 100)
 
 **Response (200):**
 ```json
@@ -614,19 +886,45 @@ List all sales (paginated).
       "customerId": "cuid",
       "totalAmount": 150.00,
       "status": "COMPLETED|PENDING|CANCELLED",
-      "saleDate": "2024-01-01T00:00:00Z",
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "saleDate": "2026-06-14T20:49:16.000Z",
+      "ownerId": "cuid",
+      "createdAt": "2026-06-14T20:49:16.000Z",
+      "updatedAt": "2026-06-14T20:49:16.000Z",
+      "customer": {
+        "id": "cuid",
+        "name": "string"
+      },
+      "owner": {
+        "id": "cuid",
+        "name": "string"
+      },
+      "lineItems": [
+        {
+          "id": "cuid",
+          "saleId": "cuid",
+          "gameId": "cuid",
+          "quantity": 2,
+          "pricePerUnit": 75.00,
+          "subtotal": 150.00,
+          "game": {
+            "id": "cuid",
+            "name": "string"
+          }
+        }
+      ]
     }
   ],
-  "total": 248
+  "total": 248,
+  "page": 1,
+  "limit": 10,
+  "hasMore": true
 }
 ```
 
 ---
 
-#### POST `/sales`
-Create new sale with line items.
+#### POST `/api/sales`
+Create new sale with line items. Deducts stock level automatically when the status is `COMPLETED`.
 
 **Request Body:**
 ```json
@@ -638,6 +936,7 @@ Create new sale with line items.
       "quantity": "number (required, >= 1)"
     }
   ],
+  "ownerId": "string (optional)",
   "status": "PENDING|COMPLETED|CANCELLED (optional, default PENDING)",
   "saleDate": "ISO string (optional, default now)"
 }
@@ -646,23 +945,126 @@ Create new sale with line items.
 **Response (201):**
 ```json
 {
-  "id": "cuid",
-  "customerId": "cuid",
-  "totalAmount": 150.00,
-  "status": "PENDING",
-  "saleDate": "2024-01-01T00:00:00Z",
-  "createdAt": "2024-01-01T00:00:00Z",
-  "updatedAt": "2024-01-01T00:00:00Z",
-  "lineItems": [
+  "data": {
+    "id": "cuid",
+    "customerId": "cuid",
+    "totalAmount": 150.00,
+    "status": "PENDING",
+    "saleDate": "2026-06-14T20:49:16.000Z",
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "customer": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "owner": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "lineItems": [
+      {
+        "id": "cuid",
+        "saleId": "cuid",
+        "gameId": "cuid",
+        "quantity": 2,
+        "pricePerUnit": 75.00,
+        "subtotal": 150.00,
+        "createdAt": "2026-06-14T20:49:16.000Z",
+        "updatedAt": "2026-06-14T20:49:16.000Z",
+        "game": {
+          "id": "cuid",
+          "name": "string"
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### GET `/api/sales/:id`
+Get sale details with line items and customer/owner details.
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "customerId": "cuid",
+    "totalAmount": 150.00,
+    "status": "COMPLETED",
+    "saleDate": "2026-06-14T20:49:16.000Z",
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "customer": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "owner": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "lineItems": [
+      {
+        "id": "cuid",
+        "saleId": "cuid",
+        "gameId": "cuid",
+        "quantity": 2,
+        "pricePerUnit": 75.00,
+        "subtotal": 150.00,
+        "game": {
+          "id": "cuid",
+          "name": "string"
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### GET `/api/sales/user/:userId`
+Get all sales transactions belonging to a specific user.
+
+**Response (200):**
+```json
+{
+  "data": [
     {
       "id": "cuid",
-      "saleId": "cuid",
-      "gameId": "cuid",
-      "quantity": 2,
-      "pricePerUnit": 49.99,
-      "subtotal": 99.98,
-      "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "customerId": "cuid",
+      "totalAmount": 150.00,
+      "status": "COMPLETED",
+      "saleDate": "2026-06-14T20:49:16.000Z",
+      "ownerId": "userId",
+      "createdAt": "2026-06-14T20:49:16.000Z",
+      "updatedAt": "2026-06-14T20:49:16.000Z",
+      "customer": {
+        "id": "cuid",
+        "name": "string"
+      },
+      "owner": {
+        "id": "userId",
+        "name": "string"
+      },
+      "lineItems": [
+        {
+          "id": "cuid",
+          "saleId": "cuid",
+          "gameId": "cuid",
+          "quantity": 2,
+          "pricePerUnit": 75.00,
+          "subtotal": 150.00,
+          "game": {
+            "id": "cuid",
+            "name": "string"
+          }
+        }
+      ]
     }
   ]
 }
@@ -670,62 +1072,97 @@ Create new sale with line items.
 
 ---
 
-#### GET `/sales/:id`
-Get sale details with line items and customer info.
-
-**Response (200):** Sale object with lineItems expanded
-
----
-
-#### PATCH `/sales/:id`
-Update sale.
+#### PATCH `/api/sales/:id`
+Update sale info (status, saleDate, ownerId). Updates inventory stock level dynamically if sale status transitions.
 
 **Request Body:**
 ```json
 {
-  "customerId": "string (optional)",
   "status": "PENDING|COMPLETED|CANCELLED (optional)",
-  "lineItems": [
-    {
-      "gameId": "string",
-      "quantity": "number"
-    }
-  ]
+  "saleDate": "ISO string (optional)",
+  "ownerId": "string (optional)"
 }
 ```
 
-**Response (200):** Updated sale object
+**Response (200):**
+```json
+{
+  "data": {
+    "id": "cuid",
+    "customerId": "cuid",
+    "totalAmount": 150.00,
+    "status": "COMPLETED",
+    "saleDate": "2026-06-14T20:49:16.000Z",
+    "ownerId": "cuid",
+    "createdAt": "2026-06-14T20:49:16.000Z",
+    "updatedAt": "2026-06-14T20:49:16.000Z",
+    "customer": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "owner": {
+      "id": "cuid",
+      "name": "string"
+    },
+    "lineItems": [
+      {
+        "id": "cuid",
+        "saleId": "cuid",
+        "gameId": "cuid",
+        "quantity": 2,
+        "pricePerUnit": 75.00,
+        "subtotal": 150.00,
+        "game": {
+          "id": "cuid",
+          "name": "string"
+        }
+      }
+    ]
+  }
+}
+```
 
 ---
 
-#### DELETE `/sales/:id`
-Delete sale (reverses inventory if COMPLETED).
+#### DELETE `/api/sales/:id`
+Delete sale (automatically deletes all associated line items). Reverses inventory stock counts if the sale status was `COMPLETED`.
 
-**Response (204):** No content
+**Response (200):**
+```json
+{
+  "message": "Sale deleted successfully"
+}
+```
 
 ---
 
 ### 2.6 Reports
 
-#### GET `/reports/sales-summary`
-Get sales metrics and summary statistics.
+#### GET `/api/reports/sales-summary`
+Get overall sales metrics and summary statistics.
 
 **Response (200):**
 ```json
 {
-  "totalSales": 248,
-  "totalRevenue": 12500.00,
-  "averageOrderValue": 50.40,
-  "completedSales": 200,
-  "pendingSales": 48,
-  "cancelledSales": 0
+  "data": {
+    "totalSales": 248,
+    "totalRevenue": 12500.00,
+    "averageSaleValue": 50.40,
+    "totalCustomers": 15,
+    "totalGamiesSold": 300
+  },
+  "generatedAt": "2026-06-14T20:49:16.000Z"
 }
 ```
 
 ---
 
-#### GET `/reports/revenue-by-customer`
-Get total revenue grouped by customer (top 20).
+#### GET `/api/reports/revenue-by-customer`
+Get total revenue grouped by customer (ordered by total revenue descending).
+
+**Query Parameters:**
+- `userId`: Optional user ID to filter sales owner
+- `limit`: Optional maximum customers to return (default 50, max 100)
 
 **Response (200):**
 ```json
@@ -735,44 +1172,48 @@ Get total revenue grouped by customer (top 20).
       "customerId": "cuid",
       "customerName": "string",
       "totalRevenue": 1500.50,
-      "purchaseCount": 12
+      "saleCount": 12,
+      "averageSaleValue": 125.04
     }
-  ]
+  ],
+  "total": 1500.50,
+  "generatedAt": "2026-06-14T20:49:16.000Z"
 }
 ```
 
 ---
 
-#### GET `/reports/top-selling-games`
-Get top selling games by quantity and revenue.
+#### GET `/api/reports/top-selling-games`
+Get top selling games by quantity and revenue (ordered by total revenue descending).
+
+**Query Parameters:**
+- `limit`: Optional maximum games to return (default 20, max 100)
 
 **Response (200):**
 ```json
 {
-  "byQuantity": [
+  "data": [
     {
       "gameId": "cuid",
       "gameName": "string",
-      "totalQuantity": 150,
-      "platform": "PC"
+      "platform": "PC",
+      "quantitySold": 150,
+      "totalRevenue": 5000.00,
+      "averagePricePerUnit": 33.33
     }
   ],
-  "byRevenue": [
-    {
-      "gameId": "cuid",
-      "gameName": "string",
-      "totalRevenue": 5000.00,
-      "totalQuantity": 100,
-      "platform": "PC"
-    }
-  ]
+  "count": 1,
+  "generatedAt": "2026-06-14T20:49:16.000Z"
 }
 ```
 
 ---
 
-#### GET `/reports/user-performance`
-Get sales performance metrics per user.
+#### GET `/api/reports/user-performance`
+Get sales performance metrics per user/staff (Admin only).
+
+**Query Parameters:**
+- `limit`: Optional maximum users to return (default 50, max 100)
 
 **Response (200):**
 ```json
@@ -781,14 +1222,15 @@ Get sales performance metrics per user.
     {
       "userId": "cuid",
       "userName": "string",
-      "totalSales": 45,
+      "saleCount": 45,
       "totalRevenue": 2250.00,
-      "averageOrderValue": 50.00
+      "averageSaleValue": 50.00,
+      "gamesSold": 90
     }
-  ]
+  ],
+  "generatedAt": "2026-06-14T20:49:16.000Z"
 }
 ```
-
 
 ---
 
@@ -804,17 +1246,17 @@ All errors return JSON with the following format:
 ```
 
 **Common Errors:**
-- `Missing required field: name` - Validation failed
-- `Customer not found` - Resource not found
-- `Unauthorized` - Missing/invalid JWT
-- `Insufficient permissions` - User lacks required role
-- `MobyGames API unavailable` - External service timeout
+- `Customer name is required` - Validation failed (400)
+- `Customer not found` - Resource not found (404)
+- `Not authenticated` - Missing/invalid JWT (401)
+- `Forbidden` - User lacks required role (403)
+- `Email already in use` - Conflict error (409)
 
 ---
 
 ## 4. Authentication & Authorization
 
-All endpoints except `/auth/register` and `/auth/login` require JWT token.
+All endpoints except `/api/auth/register`, `/api/auth/login`, and public registration require JWT token.
 
 **Permissions by Role:**
 - `USER`: Can view/create sales, view inventory
