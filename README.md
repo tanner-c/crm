@@ -3,6 +3,7 @@ Game Store Management System
 
 [API Specifications](SPECIFICATIONS.md)
 [UML Class Diagram](docs/uml_class_diagram.md)
+[User Guide](docs/user_guide.md)
 [Application Design Diagram](docs/design_diagrams.md)
 [Manual Testing Checklist](#manual-testing)
 
