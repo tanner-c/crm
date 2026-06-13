@@ -6,7 +6,6 @@ import {
   validateAccount,
   validateContact,
   validateDeal,
-  validateActivity,
   formatValidationErrors,
 } from '../src/utils/validation';
 
@@ -226,21 +225,3 @@ describe('Deal Validation', () => {
   });
 });
 
-describe('Activity Validation', () => {
-  test('should validate valid activity', () => {
-    const result = validateActivity('TASK', 'Call Customer', 'Discuss proposal', new Date().toISOString());
-    expect(result.isValid).toBe(true);
-  });
-
-  test('should reject invalid type or empty subject', () => {
-    expect(validateActivity('', 'Call Customer').isValid).toBe(false);
-    expect(validateActivity('INVALID_TYPE', 'Call Customer').isValid).toBe(false);
-    expect(validateActivity('TASK', '').isValid).toBe(false);
-  });
-
-  test('should reject very long subject, body, or invalid due date', () => {
-    expect(validateActivity('TASK', 'a'.repeat(256)).isValid).toBe(false);
-    expect(validateActivity('TASK', 'Call Customer', 'a'.repeat(5001)).isValid).toBe(false);
-    expect(validateActivity('TASK', 'Call Customer', 'body', 'invalid-date').isValid).toBe(false);
-  });
-});

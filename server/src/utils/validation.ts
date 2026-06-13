@@ -276,55 +276,7 @@ export function validateDeal(
   };
 }
 
-// ============================================================================
-// Activity Validation
-// ============================================================================
 
-const VALID_ACTIVITY_TYPES = ['NOTE', 'TASK', 'CALL', 'MEETING'];
-
-export function validateActivity(
-  type: string,
-  subject: string,
-  body?: string,
-  dueAt?: string
-): ValidationResult {
-  const errors: ValidationError[] = [];
-
-  // Validate type
-  if (!type || type.trim() === '') {
-    errors.push({ field: 'type', message: 'Activity type is required' });
-  } else if (!VALID_ACTIVITY_TYPES.includes(type.toUpperCase())) {
-    errors.push({
-      field: 'type',
-      message: `Activity type must be one of: ${VALID_ACTIVITY_TYPES.join(', ')}`,
-    });
-  }
-
-  // Validate subject
-  if (!subject || subject.trim() === '') {
-    errors.push({ field: 'subject', message: 'Activity subject is required' });
-  } else if (subject.length > 255) {
-    errors.push({ field: 'subject', message: 'Subject is too long' });
-  }
-
-  // Validate body
-  if (body && body.length > 5000) {
-    errors.push({ field: 'body', message: 'Activity body is too long' });
-  }
-
-  // Validate due date
-  if (dueAt && dueAt.trim() !== '') {
-    const date = new Date(dueAt);
-    if (isNaN(date.getTime())) {
-      errors.push({ field: 'dueAt', message: 'Invalid due date format' });
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
-}
 
 // ============================================================================
 // Helper Functions

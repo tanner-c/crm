@@ -45,7 +45,6 @@ model User {
 
   customers  Customer[]
   sales      Sale[]
-  activities Activity[]
 }
 
 model Customer {
@@ -61,7 +60,6 @@ model Customer {
 
   owner      User?      @relation(fields: [ownerId], references: [id])
   sales      Sale[]
-  activities Activity[]
 }
 
 model Game {
@@ -94,7 +92,6 @@ model Sale {
   customer   Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
   owner      User?          @relation(fields: [ownerId], references: [id])
   lineItems  SaleLineItem[]
-  activities Activity[]
 }
 
 model SaleLineItem {
@@ -113,27 +110,3 @@ model SaleLineItem {
   @@unique([saleId, gameId])
 }
 
-model Activity {
-  id         String       @id @default(cuid())
-  type       ActivityType
-  subject    String
-  body       String?
-  dueAt      DateTime?
-  completed  Boolean      @default(false)
-  ownerId    String?
-  customerId String?
-  saleId     String?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-
-  owner    User?     @relation(fields: [ownerId], references: [id])
-  customer Customer? @relation(fields: [customerId], references: [id])
-  sale     Sale?     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-}
-
-enum ActivityType {
-  NOTE
-  TASK
-  CALL
-  MEETING
-}

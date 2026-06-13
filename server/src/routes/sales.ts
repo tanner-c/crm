@@ -150,7 +150,6 @@ router.get('/:id', requireAuth, async (req, res) => {
                         game: true,
                     },
                 },
-                activities: true,
             },
         });
 

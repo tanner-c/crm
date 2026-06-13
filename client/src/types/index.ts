@@ -114,7 +114,6 @@ export interface Customer {
   createdAt: string;
   updatedAt: string;
   sales?: Sale[];
-  activities?: Activity[];
 }
 
 export interface CustomerFormData {
@@ -174,7 +173,6 @@ export interface Sale {
   createdAt: string;
   updatedAt: string;
   lineItems?: SaleLineItem[];
-  activities?: Activity[];
 }
 
 export interface SaleFormData {
@@ -192,51 +190,7 @@ export interface UpdateSaleRequest extends Partial<Omit<SaleFormData, 'lineItems
   // partial update (cannot update line items through this endpoint)
 }
 
-// ============================================================================
-// Activity Types
-// ============================================================================
 
-export const ActivityType = {
-  NOTE: 'NOTE',
-  TASK: 'TASK',
-  CALL: 'CALL',
-  MEETING: 'MEETING',
-} as const;
-
-export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType];
-
-export interface Activity {
-  id: string;
-  type: ActivityType;
-  subject: string;
-  body?: string;
-  dueAt?: string;
-  completed: boolean;
-  ownerId: string;
-  customerId?: string;
-  saleId?: string;
-  owner?: User;
-  customer?: Customer;
-  sale?: Sale;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ActivityFormData {
-  type: ActivityType;
-  subject: string;
-  body?: string;
-  dueAt?: string;
-}
-
-export interface CreateActivityRequest extends ActivityFormData {
-  customerId?: string;
-  saleId?: string;
-}
-
-export interface UpdateActivityRequest extends Partial<ActivityFormData> {
-  completed?: boolean;
-}
 
 // ============================================================================
 // Search Types

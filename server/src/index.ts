@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/users';
 import customerRoutes from './routes/customers';
 import authRoutes from './routes/auth';
-import activityRoutes from './routes/activities';
 import inventoryRoutes from './routes/inventory';
 import salesRoutes from './routes/sales';
 import reportRoutes from './routes/reports';
@@ -45,7 +44,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/sales', salesRoutes);
-app.use('/api/activities', activityRoutes);
 app.use('/api/reports', reportRoutes);
 
 export default app;

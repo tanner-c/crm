@@ -95,9 +95,6 @@ router.get('/:id', requireAuth, async (req, res) => {
                     },
                     orderBy: { saleDate: 'desc' },
                 },
-                activities: {
-                    orderBy: { createdAt: 'desc' },
-                },
                 owner: true,
             },
         });

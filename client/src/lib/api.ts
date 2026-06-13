@@ -1,6 +1,5 @@
 import type {
   Game,
-  Activity,
   SaleLineItemFormData,
 } from '../types/index';
 
@@ -175,42 +174,7 @@ export async function deleteSale(id: string) {
   return response.json();
 }
 
-// ============================================================================
-// Activity API Functions
-// ============================================================================
 
-export async function fetchActivities() {
-  const response = await callAPIWithAuth('activities');
-  return response.json();
-}
-
-export async function fetchActivity(id: string) {
-  const response = await callAPIWithAuth(`activities/${id}`);
-  return response.json();
-}
-
-export async function createActivity(data: Omit<Activity, 'id' | 'createdAt' | 'updatedAt' | 'owner'>) {
-  const response = await callAPIWithAuth('activities', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return response.json();
-}
-
-export async function updateActivity(id: string, data: Partial<Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>>) {
-  const response = await callAPIWithAuth(`activities/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return response.json();
-}
-
-export async function deleteActivity(id: string) {
-  const response = await callAPIWithAuth(`activities/${id}`, { method: 'DELETE' });
-  return response.json();
-}
 
 // ============================================================================
 // Report API Functions
