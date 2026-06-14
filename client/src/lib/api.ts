@@ -13,8 +13,9 @@ export function callAPIWithAuth(url: string, options: RequestInit = {}): Promise
   if (import.meta.env.VITE_API_URL) {
     const protocol = import.meta.env.DEV ? 'http' : 'https';
 
-    // Render environment variable only gives us the subdomain, not the full domain.
-    const domain = import.meta.env.DEV ? '' : '.onrender.com';
+    // If VITE_API_URL is already a full domain name (or contains '.onrender.com'), do not append it.
+    const hasDomain = import.meta.env.VITE_API_URL.includes('.') || import.meta.env.DEV;
+    const domain = hasDomain ? '' : '.onrender.com';
 
     url = `${protocol}://${import.meta.env.VITE_API_URL}${domain}/api/${url}`;
   }
@@ -26,7 +27,9 @@ export function callAPI(url: string, options: RequestInit = {}): Promise<Respons
   if (import.meta.env.VITE_API_URL) {
     const protocol = import.meta.env.DEV ? 'http' : 'https';
 
-    const domain = import.meta.env.DEV ? '' : '.onrender.com';
+    // If VITE_API_URL is already a full domain name (or contains '.onrender.com'), do not append it.
+    const hasDomain = import.meta.env.VITE_API_URL.includes('.') || import.meta.env.DEV;
+    const domain = hasDomain ? '' : '.onrender.com';
 
     url = `${protocol}://${import.meta.env.VITE_API_URL}${domain}/api/${url}`;
   }

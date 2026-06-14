@@ -5,6 +5,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding game store database...");
 
+  // --- Cleanups ---
+  console.log("🧹 Cleaning up existing database records...");
+  await prisma.saleLineItem.deleteMany();
+  await prisma.sale.deleteMany();
+  await prisma.customer.deleteMany();
+  await prisma.game.deleteMany();
+  await prisma.user.deleteMany();
+
   // --- Users ---
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" },
