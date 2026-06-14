@@ -23,7 +23,7 @@ A full stack game retail management application for managing inventory, sales, a
 ## Features
 
 - 🎮 **Game Inventory Management**: Add, edit, delete games with platforms (PC, PlayStation, Xbox, Nintendo, Mobile), pricing, and stock tracking
-- 🔍 **MobyGames Integration**: Search for games from MobyGames API and auto-populate inventory with game details
+- 🔍 **IGDB Integration**: Search for games from IGDB API and auto-populate inventory with game details
 - 👥 **Customer Management**: Manage customers with loyalty tier tracking (Standard, Gold, Platinum) and purchase history
 - 💰 **Sales Management**: Create sales transactions with multi-item line items and real-time inventory tracking
 - 📊 **Analytics & Reports**: View sales summaries, revenue by customer, top selling games, and staff performance metrics
