@@ -66,7 +66,7 @@ export default function Dashboard() {
               </div>
               <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 card-hover">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">🎮 Inventory</h2>
-                <p className="text-gray-600">Browse games, manage stock, and search MobyGames.</p>
+                <p className="text-gray-600">Browse games, manage stock, and search IGDB.</p>
                 <a href="/inventory" className="mt-4 inline-block bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors duration-200">View Inventory</a>
               </div>
               <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 card-hover">

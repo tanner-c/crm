@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import prisma from '../prisma/client';
 import { requireAdmin, requireAuth } from '../middleware/auth';
-import { searchGames, getGameDetails, formatGameForInventory } from '../services/mobygames';
+import { searchGames, getGameDetails, formatGameForInventory } from '../services/igdb';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const router = Router();
  * Inventory Routes (Games Management)
  * GET /api/inventory - Get all games with pagination
  * POST /api/inventory - Add a new game to inventory (admin only)
- * GET /api/inventory/search?q=query - Search MobyGames API for games
+ * GET /api/inventory/search?q=query - Search IGDB API for games
  * GET /api/inventory/:id - Get a specific game by ID
  * PATCH /api/inventory/:id - Update game details (admin only)
  * DELETE /api/inventory/:id - Remove game from inventory (admin only)
@@ -60,7 +60,7 @@ router.get('/', requireAuth, async (req, res) => {
     }
 });
 
-// GET search MobyGames API for games
+// GET search IGDB API for games
 router.get('/search', requireAuth, async (req, res) => {
     try {
         const query = String(req.query.q || '').trim();
@@ -81,7 +81,7 @@ router.get('/search', requireAuth, async (req, res) => {
             count: results.length,
         });
     } catch (error) {
-        console.error('MobyGames search error:', error);
+        console.error('IGDB search error:', error);
         res.status(500).json({ error: 'Failed to search games' });
     }
 });
@@ -124,7 +124,7 @@ router.post('/', requireAdmin, async (req, res) => {
     }
 });
 
-// POST add game from MobyGames search result
+// POST add game from IGDB search result
 router.post('/add-from-search', requireAdmin, async (req, res) => {
     try {
         const { mobyGameId, name, platform, genre, description, coverArtUrl, releaseDate, price, stockLevel } = req.body;

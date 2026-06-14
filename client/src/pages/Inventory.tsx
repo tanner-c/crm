@@ -4,6 +4,74 @@ import ItemTable from '../components/ui/ItemTable';
 import GameForm from '../components/forms/GameForm';
 import type { Game, GamePlatform, GameSearchResult } from '../types/index';
 
+interface SearchResultCardProps {
+  game: GameSearchResult;
+  onAdd: (game: GameSearchResult, price: number, stockLevel: number) => void;
+}
+
+function SearchResultCard({ game, onAdd }: SearchResultCardProps) {
+  const [price, setPrice] = useState<number>(29.99);
+  const [stockLevel, setStockLevel] = useState<number>(5);
+
+  return (
+    <div className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 shadow-xs card-hover">
+      {game.coverUrl ? (
+        <img
+          src={game.coverUrl}
+          alt={game.name}
+          className="w-24 h-36 object-cover rounded-xl shadow-xs border border-gray-100/50 shrink-0"
+        />
+      ) : (
+        <div className="w-24 h-36 bg-gray-50 border border-gray-100 flex items-center justify-center rounded-xl text-3xl select-none shrink-0">
+          🎮
+        </div>
+      )}
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="font-bold text-base text-gray-800 mb-1 leading-tight line-clamp-2">{game.name}</h3>
+          <p className="text-xs text-blue-600 font-semibold mb-1">
+            {game.platforms?.join(', ')}
+          </p>
+          <p className="text-[11px] text-gray-500 font-medium">
+            {game.genres?.join(', ')}
+          </p>
+          
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <div>
+              <label className="block text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1">Price ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={price}
+                onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
+                className="w-full px-2 py-1 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 focus:outline-hidden transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label className="block text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1">Stock</label>
+              <input
+                type="number"
+                min="0"
+                value={stockLevel}
+                onChange={(e) => setStockLevel(parseInt(e.target.value) || 0)}
+                className="w-full px-2 py-1 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 focus:outline-hidden transition-all duration-200"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <button
+          onClick={() => onAdd(game, price, stockLevel)}
+          className="mt-4 w-full px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer text-center"
+        >
+          Add to Inventory
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Inventory() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,7 +139,7 @@ export default function Inventory() {
     }
   };
 
-  const handleAddFromSearch = async (game: GameSearchResult) => {
+  const handleAddFromSearch = async (game: GameSearchResult, price: number, stockLevel: number) => {
     try {
       const gameData = {
         name: game.name,
@@ -80,8 +148,8 @@ export default function Inventory() {
         description: game.description,
         coverArtUrl: game.coverUrl,
         releaseDate: game.releaseDate,
-        price: 29.99,
-        stockLevel: 0,
+        price,
+        stockLevel,
         mobyGameId: game.mobyGameId,
       };
 
@@ -116,6 +184,7 @@ export default function Inventory() {
     platform: GamePlatform;
     genre?: string;
     description?: string;
+    coverArtUrl?: string;
     price: number;
     stockLevel: number;
   }) => {
@@ -228,7 +297,7 @@ export default function Inventory() {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
-            Search MobyGames
+            Search IGDB
           </button>
           <button
             onClick={() => { setActiveTab('low-stock'); setPage(1); }}
@@ -322,36 +391,11 @@ export default function Inventory() {
             {searchResults.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {searchResults.map((game) => (
-                  <div key={`${game.mobyGameId}-${game.name}`} className="border rounded-lg p-4 flex gap-4">
-                    {game.coverUrl ? (
-                      <img
-                        src={game.coverUrl}
-                        alt={game.name}
-                        className="w-16 h-20 object-cover rounded shadow-xs shrink-0"
-                      />
-                    ) : (
-                      <div className="w-16 h-20 bg-gray-100 border border-gray-200 flex items-center justify-center rounded text-xl select-none shrink-0">
-                        🎮
-                      </div>
-                    )}
-                    <div className="flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="font-semibold text-base mb-1 leading-tight">{game.name}</h3>
-                        <p className="text-xs text-gray-500 mb-1">
-                          {game.platforms?.join(', ')}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {game.genres?.join(', ')}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleAddFromSearch(game)}
-                        className="mt-3 w-full px-3 py-2 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700"
-                      >
-                        Add to Inventory
-                      </button>
-                    </div>
-                  </div>
+                  <SearchResultCard
+                    key={`${game.mobyGameId}-${game.name}`}
+                    game={game}
+                    onAdd={handleAddFromSearch}
+                  />
                 ))}
               </div>
             )}

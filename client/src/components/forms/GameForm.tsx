@@ -8,6 +8,7 @@ interface GameFormProps {
     platform: GamePlatform;
     genre?: string;
     description?: string;
+    coverArtUrl?: string;
     price: number;
     stockLevel: number;
   }) => void;
@@ -21,6 +22,7 @@ export default function GameForm({ game, onSubmit, onCancel, loading }: GameForm
     platform: (game?.platform || 'PC') as GamePlatform,
     genre: game?.genre || '',
     description: game?.description || '',
+    coverArtUrl: game?.coverArtUrl || '',
     price: game?.price || 29.99,
     stockLevel: game?.stockLevel || 0,
   });
@@ -62,6 +64,7 @@ export default function GameForm({ game, onSubmit, onCancel, loading }: GameForm
       platform: formData.platform,
       genre: formData.genre || undefined,
       description: formData.description || undefined,
+      coverArtUrl: formData.coverArtUrl.trim() || undefined,
       price: formData.price,
       stockLevel: formData.stockLevel,
     });
@@ -130,6 +133,34 @@ export default function GameForm({ game, onSubmit, onCancel, loading }: GameForm
               placeholder="Enter game description"
               rows={3}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Cover Art URL</label>
+            <div className="flex gap-3 items-center">
+              <input
+                type="text"
+                name="coverArtUrl"
+                value={formData.coverArtUrl}
+                onChange={handleChange}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/cover.jpg"
+              />
+              {formData.coverArtUrl.trim() ? (
+                <img
+                  src={formData.coverArtUrl.trim()}
+                  alt="Preview"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                  className="w-10 h-14 object-cover rounded shadow-xs border border-gray-200 shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-14 bg-gray-50 border border-gray-200 flex items-center justify-center rounded text-lg text-gray-400 select-none shrink-0">
+                  🎮
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

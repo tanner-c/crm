@@ -8,8 +8,8 @@ jest.mock('../src/middleware/auth', () => ({
 import request from 'supertest';
 import app from '../src/index';
 
-// Mock mobygames service
-jest.mock('../src/services/mobygames', () => ({
+// Mock igdb service
+jest.mock('../src/services/igdb', () => ({
     searchGames: jest.fn(() => Promise.resolve([
         {
             mobyGameId: 12345,
@@ -176,7 +176,7 @@ describe('Inventory (Games) API (mocked)', () => {
         expect(res.body).toHaveProperty('data');
     });
 
-    test('GET /api/inventory/search returns games from MobyGames', async () => {
+    test('GET /api/inventory/search returns games from IGDB', async () => {
         const res = await request(app).get('/api/inventory/search?q=Cyberpunk');
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('data');
