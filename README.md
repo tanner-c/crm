@@ -106,7 +106,8 @@ crm/
    JWT_SECRET=your-secret-key
    PORT=5000
    NODE_ENV=development
-   MOBYGAMES_API_KEY=your-api-key
+   IGDB_CLIENT_ID=your-client-id
+   IGDB_CLIENT_SECRET=your-client-secret
    ```
    
    **client/.env.local:**
