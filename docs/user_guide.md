@@ -44,18 +44,20 @@ This module helps you keep track of what games you have in stock, their retail p
 ### Searching and Adding Games Automatically
 To save time typing, you can search an online game database:
 1. Go to the **Inventory** section.
-2. Click **Add Game** -> select **Search Database**.
+2. Click **Search IGDB**.
 3. Type the name of the game and press enter.
-4. Locate the correct version of the game (e.g., matching the platform like PlayStation 5 or Nintendo Switch).
-5. Click **Import**. The game's title, platform, genre, description, and cover art will fill in automatically!
-6. Enter your retail **Price** and current **Stock Level**, then click **Save**.
+4. Locate the correct game from the search results.
+5. Choose the sale price and quantity you have in stock.
+6. Click **Add to Inventory**.
+7. The game's title, platform, genre, description, and cover art will be filled in automatically and will be added to your inventory.
 
 ### Manually Adding a Game
 If a game is not found in the online database:
-1. Click **Add Game** -> select **Add Manually**.
+1. Click **Add Game** in the Inventory section.
 2. Type in the game's title, select its platform, genre, and type a description.
 3. Enter the retail price and how many copies you currently have in stock.
-4. Click **Save**.
+4. Provide a URL for the game's cover art image.
+5. Click **Save**.
 
 ---
 
